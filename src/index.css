@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+@theme {
+  /* GMU-inspired identity: forest green + gold, kept subtle and modern */
+  --color-mason-green-50: #eef5f1;
+  --color-mason-green-100: #d7e8de;
+  --color-mason-green-200: #b0d1bd;
+  --color-mason-green-300: #82b599;
+  --color-mason-green-400: #4f9273;
+  --color-mason-green-500: #2f7355;
+  --color-mason-green-600: #235c44;
+  --color-mason-green-700: #1c4a37;
+  --color-mason-green-800: #163a2b;
+  --color-mason-green-900: #0f2a1f;
+
+  --color-mason-gold-50: #fdf8ec;
+  --color-mason-gold-100: #faedc7;
+  --color-mason-gold-200: #f4d98a;
+  --color-mason-gold-300: #edc158;
+  --color-mason-gold-400: #e2a82f;
+  --color-mason-gold-500: #c98d1d;
+  --color-mason-gold-600: #a56f17;
+  --color-mason-gold-700: #7f5416;
+
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #f7f8f6;
+  color: #1a1f1c;
+}
+
+* {
+  scrollbar-width: thin;
+}
+
+.focus-ring {
+  outline: none;
+}
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-mason-green-500);
+  outline-offset: 2px;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
