@@ -153,7 +153,7 @@ export function getIntentResults(student: Student, intent: Intent): IntentResult
     case 'study': {
       const groups = studyGroups.filter((g) => student.courses.includes(g.courseCode))
       const classmates = students
-        .filter((s) => s.id !== student.id && s.courses.some((c) => student.courses.includes(c)))
+        .filter((s) => s.id !== student.id && s.discoverable !== false && s.courses.some((c) => student.courses.includes(c)))
         .map((s) => {
           const shared = s.courses.filter((c) => student.courses.includes(c))
           return { student: s, reason: `Also taking ${shared.join(', ')}` }

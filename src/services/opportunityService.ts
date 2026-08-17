@@ -36,6 +36,6 @@ export function getOpportunitiesMatchingStudent(student: Student): (Opportunity 
 export function getRecommendedPeopleForOpportunity(opportunity: Opportunity): { student: Student; matchedSkills: string[] }[] {
   return students
     .map((s) => ({ student: s, matchedSkills: matchingSkills(s, opportunity) }))
-    .filter((m) => m.matchedSkills.length > 0 && m.student.id !== opportunity.postedBy)
+    .filter((m) => m.matchedSkills.length > 0 && m.student.id !== opportunity.postedBy && m.student.discoverable !== false)
     .sort((a, b) => b.matchedSkills.length - a.matchedSkills.length)
 }

@@ -18,10 +18,14 @@ export interface PeopleMatch {
  * communities. Production would likely use embeddings + activity signals,
  * but this keeps the "why" fully explainable, which matters more for a
  * prototype than sophistication.
+ *
+ * Candidates who have turned off "discoverable in People discovery" (Settings)
+ * are excluded from the pool — this only affects whether *they* can be found
+ * by others, never whether `student` (the person searching) can see results.
  */
 export function matchPeople(student: Student, pool: Student[] = students): PeopleMatch[] {
   return pool
-    .filter((s) => s.id !== student.id)
+    .filter((s) => s.id !== student.id && s.discoverable !== false)
     .map((s) => {
       const sharedClasses = student.courses.filter((c) => s.courses.includes(c))
       const sharedInterests = student.interests.filter((i) => s.interests.includes(i))

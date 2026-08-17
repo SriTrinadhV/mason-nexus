@@ -155,7 +155,7 @@ export function search(query: string, currentUserId?: string): Promise<SearchRes
   )
 
   const matchedStudents = rankAndTake(
-    students.filter((s) => s.id !== currentUserId),
+    students.filter((s) => s.id !== currentUserId && s.discoverable !== false),
     (s) =>
       scoreEntity(effectiveTokens, normalizedQuery, [
         { text: s.displayName, weight: 3 },

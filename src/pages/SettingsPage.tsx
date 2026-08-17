@@ -14,7 +14,6 @@ export default function SettingsPage() {
   const [notifyReplies, setNotifyReplies] = useState(true)
   const [notifyStudyGroups, setNotifyStudyGroups] = useState(true)
   const [notifyOpportunities, setNotifyOpportunities] = useState(true)
-  const [profileDiscoverable, setProfileDiscoverable] = useState(true)
   const [saved, setSaved] = useState(false)
 
   const toggleLookingFor = (v: string) => {
@@ -53,8 +52,8 @@ export default function SettingsPage() {
       <SettingsSection title="Privacy preferences">
         <ToggleRow
           label="Make my profile discoverable in People discovery"
-          checked={profileDiscoverable}
-          onChange={setProfileDiscoverable}
+          checked={currentUser.discoverable}
+          onChange={(v) => updateProfile({ discoverable: v })}
         />
         <div className="mt-3 flex items-start gap-2 rounded-lg bg-gray-50 p-3 text-xs text-gray-500">
           <Shield size={15} className="mt-0.5 shrink-0 text-gray-400" />

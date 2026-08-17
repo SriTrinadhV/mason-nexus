@@ -37,6 +37,7 @@ export const students: Student[] = [
     ],
     role: 'Student',
     verified: true,
+    discoverable: true,
   },
   {
     id: 'jordan-lee',
@@ -56,6 +57,7 @@ export const students: Student[] = [
     portfolio: [],
     role: 'Student',
     verified: true,
+    discoverable: true,
   },
   {
     id: 'priya-patel',
@@ -82,6 +84,7 @@ export const students: Student[] = [
     ],
     role: 'Community Organizer',
     verified: true,
+    discoverable: true,
   },
   {
     id: 'sam-rivera',
@@ -108,6 +111,7 @@ export const students: Student[] = [
     ],
     role: 'Student',
     verified: true,
+    discoverable: true,
   },
   {
     id: 'maria-gonzalez',
@@ -127,6 +131,7 @@ export const students: Student[] = [
     portfolio: [],
     role: 'Student',
     verified: true,
+    discoverable: true,
   },
   {
     id: 'ben-carter',
@@ -146,6 +151,7 @@ export const students: Student[] = [
     portfolio: [],
     role: 'Moderator',
     verified: true,
+    discoverable: true,
   },
   {
     id: 'chris-nguyen',
@@ -173,6 +179,7 @@ export const students: Student[] = [
     ],
     role: 'Student',
     verified: true,
+    discoverable: true,
   },
   {
     id: 'devon-brooks',
@@ -192,6 +199,7 @@ export const students: Student[] = [
     portfolio: [],
     role: 'Student',
     verified: true,
+    discoverable: true,
   },
   {
     id: 'taylor-morgan',
@@ -211,6 +219,7 @@ export const students: Student[] = [
     portfolio: [],
     role: 'Community Organizer',
     verified: true,
+    discoverable: true,
   },
 ]
 

@@ -50,6 +50,7 @@ export interface Student {
   portfolio: PortfolioItem[]
   role: 'Student' | 'Moderator' | 'Community Organizer'
   verified: boolean // GMU email verification (mocked)
+  discoverable: boolean // whether this student appears in People discovery/matching for others
 }
 
 export type LookingForOption =
