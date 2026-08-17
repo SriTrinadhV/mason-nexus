@@ -4,6 +4,7 @@ import { search, type SearchResults } from '../services/searchService'
 import SearchResultItem from '../components/cards/SearchResultItem'
 import EmptyState from '../components/common/EmptyState'
 import LoadingState from '../components/common/LoadingState'
+import { useApp } from '../context/AppContext'
 
 const exampleQueries = [
   'I need help understanding recursion',
@@ -13,6 +14,7 @@ const exampleQueries = [
 ]
 
 export default function SearchPage() {
+  const { currentUser } = useApp()
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchResults | null>(null)
   const [loading, setLoading] = useState(false)
@@ -24,13 +26,13 @@ export default function SearchPage() {
     }
     setLoading(true)
     const t = setTimeout(() => {
-      search(query).then((r) => {
+      search(query, currentUser.id).then((r) => {
         setResults(r)
         setLoading(false)
       })
     }, 250)
     return () => clearTimeout(t)
-  }, [query])
+  }, [query, currentUser.id])
 
   const totalResults = results
     ? results.communities.length + results.posts.length + results.students.length + results.studyGroups.length + results.opportunities.length
