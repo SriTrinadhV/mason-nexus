@@ -51,23 +51,40 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setCurrentUser((prev) => ({ ...prev, ...partial }))
   }, [])
 
-  const joinCommunity = useCallback((communityId: string) => {
-    setCurrentUser((prev) => {
-      if (prev.communities.includes(communityId)) return prev
+  // joinCommunity/leaveCommunity previously mutated the shared `communities`
+  // mock data (community.memberCount += 1) *inside* the functional updater
+  // passed to setCurrentUser. React Strict Mode intentionally invokes state
+  // updater functions twice in development to surface exactly this kind of
+  // impurity, so the mutation ran twice per click (+2 / -2 instead of +1 / -1)
+  // even though the returned state was only applied once. The fix: do the
+  // one-time membership check and the memberCount mutation as a plain,
+  // ordinary side effect in the callback body (which React never re-invokes),
+  // and keep the setCurrentUser updater itself pure — it only computes and
+  // returns state, so calling it twice (or any number of times) with the same
+  // `prev` is safe and always yields the same result.
+  const joinCommunity = useCallback(
+    (communityId: string) => {
+      if (currentUser.communities.includes(communityId)) return
       const community = communities.find((c) => c.id === communityId)
       if (community) community.memberCount += 1
-      return { ...prev, communities: [...prev.communities, communityId] }
-    })
-  }, [])
+      setCurrentUser((prev) =>
+        prev.communities.includes(communityId) ? prev : { ...prev, communities: [...prev.communities, communityId] },
+      )
+    },
+    [currentUser],
+  )
 
-  const leaveCommunity = useCallback((communityId: string) => {
-    setCurrentUser((prev) => {
-      if (!prev.communities.includes(communityId)) return prev
+  const leaveCommunity = useCallback(
+    (communityId: string) => {
+      if (!currentUser.communities.includes(communityId)) return
       const community = communities.find((c) => c.id === communityId)
       if (community) community.memberCount = Math.max(0, community.memberCount - 1)
-      return { ...prev, communities: prev.communities.filter((c) => c !== communityId) }
-    })
-  }, [])
+      setCurrentUser((prev) =>
+        prev.communities.includes(communityId) ? { ...prev, communities: prev.communities.filter((c) => c !== communityId) } : prev,
+      )
+    },
+    [currentUser],
+  )
 
   const markNotificationRead = useCallback((id: string) => {
     setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)))
