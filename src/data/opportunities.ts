@@ -51,6 +51,26 @@ export const opportunities: Opportunity[] = [
     interestedStudentIds: [],
     createdAt: '9h ago',
   },
+  {
+    id: 'op-6',
+    title: 'Need a marketing lead for our club rebrand',
+    description: 'Student Startups is refreshing its branding ahead of demo day and could use someone to help plan the social media rollout.',
+    requiredSkills: ['Marketing'],
+    communityContext: 'Student Startups',
+    postedBy: 'taylor-morgan',
+    interestedStudentIds: [],
+    createdAt: '1d ago',
+  },
+  {
+    id: 'op-7',
+    title: 'Looking for a teammate with product sense for a pitch competition',
+    description: 'Putting together a team for the spring pitch competition — have the technical side covered, need someone who can help shape the pitch itself.',
+    requiredSkills: ['Product Strategy'],
+    communityContext: 'Student Startups',
+    postedBy: 'priya-patel',
+    interestedStudentIds: [],
+    createdAt: '4h ago',
+  },
 ]
 
 export function getOpportunityById(id: string): Opportunity | undefined {

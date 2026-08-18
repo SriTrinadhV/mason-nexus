@@ -34,6 +34,28 @@ export const studyGroups: StudyGroup[] = [
     description: 'Small group working through problem sets together, beginner-friendly pace.',
     createdBy: 'maria-gonzalez',
   },
+  {
+    id: 'sg-4',
+    courseCode: 'CS 211',
+    title: 'CS 211 Intro Programming Study Table',
+    memberIds: ['devon-brooks'],
+    capacity: 6,
+    meetingTime: 'Wednesday, 4:00 PM',
+    location: 'Johnson Center, Room 145',
+    description: 'Weekly drop-in session working through labs and syntax questions together — beginner-friendly.',
+    createdBy: 'devon-brooks',
+  },
+  {
+    id: 'sg-5',
+    courseCode: 'IT 305',
+    title: 'IT 305 Database Design Group',
+    memberIds: ['priya-patel'],
+    capacity: 5,
+    meetingTime: 'Friday, 2:00 PM',
+    location: 'Nguyen Engineering Building, Room 108',
+    description: 'Working through ER diagrams and normalization exercises ahead of the project milestone.',
+    createdBy: 'priya-patel',
+  },
 ]
 
 // Students who have expressed intent to find a study partner but haven't joined a group yet.
