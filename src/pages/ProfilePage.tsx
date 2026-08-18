@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { Briefcase, ExternalLink, Pencil, ShieldCheck, X } from 'lucide-react'
+import { Link, useParams } from 'react-router-dom'
+import { Briefcase, ExternalLink, Pencil, Settings, ShieldCheck, X } from 'lucide-react'
 import { useApp } from '../context/AppContext'
 import { getStudentById } from '../data/students'
 import { getCommunityById } from '../data/communities'
@@ -79,12 +79,23 @@ export default function ProfilePage() {
             </div>
           </div>
           {isMe && !editing && (
-            <button
-              onClick={startEdit}
-              className="focus-ring flex items-center gap-1.5 rounded-lg border border-gray-200 px-3.5 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              <Pencil size={14} /> Edit profile
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={startEdit}
+                className="focus-ring flex items-center gap-1.5 rounded-lg border border-gray-200 px-3.5 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                <Pencil size={14} /> Edit profile
+              </button>
+              {/* Settings lives in the desktop sidebar already; this gives mobile users
+                  (who have no sidebar) a real, visible way to reach it in 2 taps from
+                  the bottom nav, instead of the plain-text mention further down this page. */}
+              <Link
+                to="/settings"
+                className="focus-ring flex items-center gap-1.5 rounded-lg border border-gray-200 px-3.5 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 lg:hidden"
+              >
+                <Settings size={14} /> Settings
+              </Link>
+            </div>
           )}
         </div>
       </div>
