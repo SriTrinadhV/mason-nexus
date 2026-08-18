@@ -128,6 +128,8 @@ export type NotificationType =
   | 'community_recommendation'
   | 'collaboration_interest'
   | 'opportunity_match'
+  | 'community_joined'
+  | 'interest_recorded'
 
 export interface AppNotification {
   id: string

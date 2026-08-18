@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ArrowLeft, Sparkles } from 'lucide-react'
 import { useApp } from '../context/AppContext'
-import { getOpportunity, expressInterest, matchingSkills, getRecommendedPeopleForOpportunity } from '../services/opportunityService'
+import { getOpportunity, matchingSkills, getRecommendedPeopleForOpportunity } from '../services/opportunityService'
 import { getStudentById } from '../data/students'
 import StudentCard from '../components/cards/StudentCard'
 import Tag from '../components/common/Tag'
@@ -13,7 +13,7 @@ import type { Opportunity } from '../types'
 
 export default function OpportunityDetailPage() {
   const { id } = useParams<{ id: string }>()
-  const { currentUser } = useApp()
+  const { currentUser, recordOpportunityInterest } = useApp()
   const [opportunity, setOpportunity] = useState<Opportunity | null | undefined>(undefined)
 
   const load = () => {
@@ -63,7 +63,7 @@ export default function OpportunityDetailPage() {
           </p>
         )}
         <button
-          onClick={() => expressInterest(opportunity.id, currentUser.id).then(load)}
+          onClick={() => recordOpportunityInterest(opportunity.id).then(load)}
           disabled={interested}
           className="focus-ring rounded-lg bg-mason-gold-400 px-4 py-2 text-sm font-semibold text-mason-green-900 hover:bg-mason-gold-500 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
         >

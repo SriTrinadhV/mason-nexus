@@ -1,8 +1,10 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
 import { getCurrentUser, students } from '../data/students'
 import { communities } from '../data/communities'
+import { opportunities } from '../data/opportunities'
 import { initialNotifications } from '../data/notifications'
-import type { AppNotification, OnboardingData, Student } from '../types'
+import { expressInterest } from '../services/opportunityService'
+import type { AppNotification, OnboardingData, Opportunity, Student } from '../types'
 
 interface AppContextValue {
   authStatus: 'signed_out' | 'signed_in'
@@ -16,6 +18,8 @@ interface AppContextValue {
   updateProfile: (partial: Partial<Student>) => void
   joinCommunity: (communityId: string) => void
   leaveCommunity: (communityId: string) => void
+  recordOpportunityInterest: (opportunityId: string) => Promise<Opportunity | undefined>
+  addNotification: (input: Omit<AppNotification, 'id' | 'createdAt' | 'read'>) => void
   markNotificationRead: (id: string) => void
   markAllNotificationsRead: () => void
 }
@@ -51,6 +55,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setCurrentUser((prev) => ({ ...prev, ...partial }))
   }, [])
 
+  // Session-only notifications: created locally when a supported action
+  // happens during the current session, exactly like every other piece of
+  // mock state in this app (joined communities, posts, etc). They reset on a
+  // full page reload — there is no backend, and nothing here pretends
+  // otherwise.
+  const addNotification = useCallback((input: Omit<AppNotification, 'id' | 'createdAt' | 'read'>) => {
+    setNotifications((prev) => [{ ...input, id: `n-${Date.now()}`, createdAt: 'Just now', read: false }, ...prev])
+  }, [])
+
   // joinCommunity/leaveCommunity previously mutated the shared `communities`
   // mock data (community.memberCount += 1) *inside* the functional updater
   // passed to setCurrentUser. React Strict Mode intentionally invokes state
@@ -70,8 +83,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setCurrentUser((prev) =>
         prev.communities.includes(communityId) ? prev : { ...prev, communities: [...prev.communities, communityId] },
       )
+      if (community) {
+        addNotification({
+          type: 'community_joined',
+          title: `You joined ${community.name}`,
+          body: `You're now a member of ${community.name}. Check out recent posts and discussions.`,
+          linkTo: `/communities/${community.id}`,
+        })
+      }
     },
-    [currentUser],
+    [currentUser, addNotification],
   )
 
   const leaveCommunity = useCallback(
@@ -84,6 +105,25 @@ export function AppProvider({ children }: { children: ReactNode }) {
       )
     },
     [currentUser],
+  )
+
+  const recordOpportunityInterest = useCallback(
+    (opportunityId: string) => {
+      const opp = opportunities.find((o) => o.id === opportunityId)
+      const alreadyInterested = opp?.interestedStudentIds.includes(currentUser.id) ?? false
+      return expressInterest(opportunityId, currentUser.id).then((updated) => {
+        if (!alreadyInterested && updated) {
+          addNotification({
+            type: 'interest_recorded',
+            title: 'Interest recorded',
+            body: `You expressed interest in "${updated.title}". The poster will be able to see you're interested.`,
+            linkTo: `/opportunities/${updated.id}`,
+          })
+        }
+        return updated
+      })
+    },
+    [currentUser, addNotification],
   )
 
   const markNotificationRead = useCallback((id: string) => {
@@ -115,6 +155,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     updateProfile,
     joinCommunity,
     leaveCommunity,
+    recordOpportunityInterest,
+    addNotification,
     markNotificationRead,
     markAllNotificationsRead,
   }

@@ -12,7 +12,6 @@ import EmptyState from '../components/common/EmptyState'
 import LoadingState from '../components/common/LoadingState'
 import { getForYouFeedAsync, getIntentResultsAsync, type IntentResults } from '../services/recommendationService'
 import { joinStudyGroup } from '../services/studyGroupService'
-import { expressInterest } from '../services/opportunityService'
 import { getCommunityById } from '../data/communities'
 import { getStudentById } from '../data/students'
 import { posts } from '../data/posts'
@@ -210,7 +209,7 @@ function IntentPanel({
   onClose: () => void
   onRefresh: () => void
 }) {
-  const { currentUser, joinCommunity } = useApp()
+  const { currentUser, joinCommunity, recordOpportunityInterest } = useApp()
   const option = getIntentOption(intent)
 
   return (
@@ -321,7 +320,7 @@ function IntentPanel({
                     opportunity={o}
                     matchedSkills={o.matchedSkills}
                     interested={o.interestedStudentIds.includes(currentUser.id)}
-                    onExpressInterest={(id) => expressInterest(id, currentUser.id).then(onRefresh)}
+                    onExpressInterest={(id) => recordOpportunityInterest(id).then(onRefresh)}
                   />
                 ))}
               </CardGrid>

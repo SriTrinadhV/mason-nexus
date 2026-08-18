@@ -15,7 +15,6 @@ import OpportunityCard from '../components/cards/OpportunityCard'
 import LoadingState from '../components/common/LoadingState'
 import EmptyState from '../components/common/EmptyState'
 import { joinStudyGroup } from '../services/studyGroupService'
-import { expressInterest } from '../services/opportunityService'
 import type { Community } from '../types'
 
 /**
@@ -30,7 +29,7 @@ import type { Community } from '../types'
  * omitting it here is enough to keep the distinction honest.
  */
 export default function DiscoverPage() {
-  const { currentUser, joinCommunity } = useApp()
+  const { currentUser, joinCommunity, recordOpportunityInterest } = useApp()
   const [people, setPeople] = useState<PeopleMatch[] | null>(null)
   const [, setRefreshKey] = useState(0)
   const refresh = () => setRefreshKey((k) => k + 1)
@@ -106,7 +105,7 @@ export default function DiscoverPage() {
                 opportunity={o}
                 matchedSkills={o.matchedSkills}
                 interested={o.interestedStudentIds.includes(currentUser.id)}
-                onExpressInterest={(id) => expressInterest(id, currentUser.id).then(refresh)}
+                onExpressInterest={(id) => recordOpportunityInterest(id).then(refresh)}
               />
             ))}
           </CardGrid>

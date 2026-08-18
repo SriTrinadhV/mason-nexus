@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Calendar, MessageSquare, Sparkles, UserPlus, Wrench } from 'lucide-react'
+import { Calendar, CheckCircle2, MessageSquare, Sparkles, UserPlus, Users, Wrench } from 'lucide-react'
 import type { AppNotification } from '../../types'
 
 const typeIcon: Record<AppNotification['type'], React.ElementType> = {
@@ -8,6 +8,8 @@ const typeIcon: Record<AppNotification['type'], React.ElementType> = {
   community_recommendation: Sparkles,
   collaboration_interest: UserPlus,
   opportunity_match: Wrench,
+  community_joined: Users,
+  interest_recorded: CheckCircle2,
 }
 
 export default function NotificationItem({

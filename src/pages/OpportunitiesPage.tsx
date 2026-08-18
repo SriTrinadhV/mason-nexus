@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Sparkles, Wrench } from 'lucide-react'
 import { useApp } from '../context/AppContext'
-import { listOpportunities, expressInterest, matchingSkills } from '../services/opportunityService'
+import { listOpportunities, matchingSkills } from '../services/opportunityService'
 import OpportunityCard from '../components/cards/OpportunityCard'
 import EmptyState from '../components/common/EmptyState'
 import LoadingState from '../components/common/LoadingState'
 import type { Opportunity } from '../types'
 
 export default function OpportunitiesPage() {
-  const { currentUser } = useApp()
+  const { currentUser, recordOpportunityInterest } = useApp()
   const [opportunities, setOpportunities] = useState<Opportunity[] | null>(null)
   const [onlyMatches, setOnlyMatches] = useState(false)
 
@@ -54,7 +54,7 @@ export default function OpportunitiesPage() {
                 opportunity={o}
                 matchedSkills={matched}
                 interested={o.interestedStudentIds.includes(currentUser.id)}
-                onExpressInterest={(id) => expressInterest(id, currentUser.id).then(load)}
+                onExpressInterest={(id) => recordOpportunityInterest(id).then(load)}
               />
             )
           })}
