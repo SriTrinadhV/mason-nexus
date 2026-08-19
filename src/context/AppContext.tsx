@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from 'react'
 import { getCurrentUser, students } from '../data/students'
 import { communities } from '../data/communities'
 import { opportunities } from '../data/opportunities'
@@ -75,9 +75,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // and keep the setCurrentUser updater itself pure — it only computes and
   // returns state, so calling it twice (or any number of times) with the same
   // `prev` is safe and always yields the same result.
+  //
+  // That guard alone isn't enough against two *genuinely separate* calls
+  // (rapid double-click, or two synchronous calls before React re-renders):
+  // gating on `currentUser.communities` reads a value that only refreshes
+  // after a render, so both calls can see the same stale "not yet a member"
+  // state and both mutate memberCount. `memberCommunitiesRef` is a plain ref
+  // — it updates synchronously, in the same tick, with no render involved —
+  // so it's used as the atomic check-and-claim source for membership instead,
+  // making join/leave idempotent no matter how close together they fire.
+  const memberCommunitiesRef = useRef(new Set(currentUser.communities))
+
   const joinCommunity = useCallback(
     (communityId: string) => {
-      if (currentUser.communities.includes(communityId)) return
+      if (memberCommunitiesRef.current.has(communityId)) return
+      memberCommunitiesRef.current.add(communityId)
       const community = communities.find((c) => c.id === communityId)
       if (community) community.memberCount += 1
       setCurrentUser((prev) =>
@@ -92,20 +104,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
         })
       }
     },
-    [currentUser, addNotification],
+    [addNotification],
   )
 
-  const leaveCommunity = useCallback(
-    (communityId: string) => {
-      if (!currentUser.communities.includes(communityId)) return
-      const community = communities.find((c) => c.id === communityId)
-      if (community) community.memberCount = Math.max(0, community.memberCount - 1)
-      setCurrentUser((prev) =>
-        prev.communities.includes(communityId) ? { ...prev, communities: prev.communities.filter((c) => c !== communityId) } : prev,
-      )
-    },
-    [currentUser],
-  )
+  const leaveCommunity = useCallback((communityId: string) => {
+    if (!memberCommunitiesRef.current.has(communityId)) return
+    memberCommunitiesRef.current.delete(communityId)
+    const community = communities.find((c) => c.id === communityId)
+    if (community) community.memberCount = Math.max(0, community.memberCount - 1)
+    setCurrentUser((prev) =>
+      prev.communities.includes(communityId) ? { ...prev, communities: prev.communities.filter((c) => c !== communityId) } : prev,
+    )
+  }, [])
 
   const recordOpportunityInterest = useCallback(
     (opportunityId: string) => {

@@ -46,7 +46,7 @@ export function createCommunity(input: {
     name: input.name,
     category: input.category,
     description: input.description,
-    memberCount: 1,
+    memberCount: 0,
     tags: input.tags,
     recentActivitySummary: 'Just created',
     color: input.category === 'club' ? 'mason-gold' : 'mason-green',
