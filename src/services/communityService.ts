@@ -1,6 +1,7 @@
 import { communities } from '../data/communities'
 import type { Community, CommunityCategory } from '../types'
 import { mockDelay } from './mockDelay'
+import { generateId } from './id'
 
 export function listCommunities(filters?: {
   category?: CommunityCategory
@@ -42,7 +43,7 @@ export function createCommunity(input: {
   createdBy: string
 }): Promise<Community> {
   const newCommunity: Community = {
-    id: `c-${Date.now()}`,
+    id: generateId('c'),
     name: input.name,
     category: input.category,
     description: input.description,

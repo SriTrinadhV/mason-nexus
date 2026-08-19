@@ -1,5 +1,6 @@
 import type { ReportReason } from '../types'
 import { mockDelay } from './mockDelay'
+import { generateId } from './id'
 
 export interface Report {
   id: string
@@ -26,7 +27,7 @@ export function submitReport(input: {
 }): Promise<Report> {
   const highPriority: ReportReason[] = ['Harassment', 'Privacy/doxxing concern', 'Academic integrity concern']
   const report: Report = {
-    id: `report-${Date.now()}`,
+    id: generateId('report'),
     targetType: input.targetType,
     targetId: input.targetId,
     reason: input.reason,

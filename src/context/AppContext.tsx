@@ -4,6 +4,7 @@ import { communities } from '../data/communities'
 import { opportunities } from '../data/opportunities'
 import { initialNotifications } from '../data/notifications'
 import { expressInterest } from '../services/opportunityService'
+import { generateId } from '../services/id'
 import type { AppNotification, OnboardingData, Opportunity, Student } from '../types'
 
 interface AppContextValue {
@@ -61,7 +62,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // full page reload — there is no backend, and nothing here pretends
   // otherwise.
   const addNotification = useCallback((input: Omit<AppNotification, 'id' | 'createdAt' | 'read'>) => {
-    setNotifications((prev) => [{ ...input, id: `n-${Date.now()}`, createdAt: 'Just now', read: false }, ...prev])
+    setNotifications((prev) => [{ ...input, id: generateId('n'), createdAt: 'Just now', read: false }, ...prev])
   }, [])
 
   // joinCommunity/leaveCommunity previously mutated the shared `communities`

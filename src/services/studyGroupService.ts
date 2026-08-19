@@ -1,6 +1,7 @@
 import { studyGroups, studyGroupSeekers } from '../data/studyGroups'
 import type { StudyGroup } from '../types'
 import { mockDelay } from './mockDelay'
+import { generateId } from './id'
 
 export function listStudyGroups(courseCode?: string): Promise<StudyGroup[]> {
   const result = courseCode ? studyGroups.filter((g) => g.courseCode === courseCode) : studyGroups
@@ -29,7 +30,7 @@ export function createStudyGroup(input: {
   createdBy: string
 }): Promise<StudyGroup> {
   const group: StudyGroup = {
-    id: `sg-${Date.now()}`,
+    id: generateId('sg'),
     courseCode: input.courseCode,
     title: input.title,
     memberIds: [input.createdBy],

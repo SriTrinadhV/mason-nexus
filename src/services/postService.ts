@@ -1,6 +1,7 @@
 import { posts, getPostsByCommunity } from '../data/posts'
 import type { Post, PostTag } from '../types'
 import { mockDelay } from './mockDelay'
+import { generateId } from './id'
 
 export function listPostsForCommunity(communityId: string): Promise<Post[]> {
   return mockDelay(
@@ -16,7 +17,7 @@ export function createPost(input: {
   tags: PostTag[]
 }): Promise<Post> {
   const newPost: Post = {
-    id: `post-${Date.now()}`,
+    id: generateId('post'),
     communityId: input.communityId,
     authorId: input.authorId,
     title: input.title,
@@ -49,7 +50,7 @@ export function addComment(postId: string, authorId: string, body: string): Prom
   const post = posts.find((p) => p.id === postId)
   if (post) {
     post.comments.push({
-      id: `c-${Date.now()}`,
+      id: generateId('c'),
       authorId,
       body,
       createdAt: 'Just now',
