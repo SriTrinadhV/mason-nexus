@@ -13,7 +13,7 @@ export default function LandingPage() {
             M
           </div>
           <span className="text-[15px] font-semibold tracking-tight text-gray-900" style={{ fontFamily: 'var(--font-display)' }}>
-            Mason Commons
+            Mason Nexus
           </span>
         </div>
         <div className="flex items-center gap-3">
@@ -82,7 +82,7 @@ export default function LandingPage() {
       </section>
 
       <footer className="border-t border-gray-200 px-6 py-6 text-center text-xs text-gray-400">
-        Mason Commons is a rough prototype for evaluating the GMU Student Community Platform concept — not an official GMU product.
+        Mason Nexus is a rough prototype for evaluating the GMU Student Community Platform concept — not an official GMU product.
       </footer>
     </div>
   )

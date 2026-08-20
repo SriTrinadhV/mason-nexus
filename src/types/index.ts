@@ -1,4 +1,4 @@
-// Core domain types for the Mason Commons prototype.
+// Core domain types for the Mason Nexus prototype.
 // These map roughly 1:1 to what would become API response shapes in production.
 
 export type Intent =

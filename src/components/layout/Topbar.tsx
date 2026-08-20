@@ -13,7 +13,7 @@ export default function Topbar() {
           M
         </div>
         <span className="text-[15px] font-semibold text-gray-900" style={{ fontFamily: 'var(--font-display)' }}>
-          Mason Commons
+          Mason Nexus
         </span>
       </Link>
 

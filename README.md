@@ -1,32 +1,48 @@
-# React + TypeScript + Vite
+# Mason Nexus
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Mason Nexus is a student community platform concept built around the George Mason University ecosystem — a central point where students, communities, study groups, skills, and opportunities come together.
 
-Currently, two official plugins are available:
+It's a frontend prototype: all data is mocked and held in memory, and authentication is simulated (any `@gmu.edu` or `@masonlive.gmu.edu` email and any password will work). There is no backend, database, or real account system.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Key features
 
-## React Compiler
+- **Communities** — class, club, and interest communities with join/leave, member counts, discussions, and posts/comments
+- **People discovery** — matches classmates by shared courses, skills, interests, and communities, with a specific, explainable reason for every match (no black-box recommendations)
+- **Study groups** — browse, join (with capacity limits), and create study groups tied to specific courses
+- **Opportunities** — peer collaboration requests students can post and express interest in
+- **Search** — a single search across communities, people, posts, study groups, and opportunities, with course-code-aware ranking and accent-insensitive matching
+- **Notifications** — a session-reactive activity feed for actions like joining a community or expressing interest in an opportunity
+- **Privacy controls** — a discoverability toggle that excludes a student from People discovery, matching, and search when turned off
+- **Onboarding** — a guided first-run flow that captures major, year, courses, interests, skills, and goals
+- **Responsive UI** — a green-and-white Mason-inspired design system that works down to mobile widths
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech stack
 
-## Expanding the Oxlint configuration
+- [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
+- [Vite](https://vite.dev/) for dev server and build
+- [React Router](https://reactrouter.com/) (`HashRouter`)
+- [Tailwind CSS v4](https://tailwindcss.com/) (CSS-first `@theme` configuration)
+- [lucide-react](https://lucide.dev/) for icons
+- [oxlint](https://oxc.rs/) for linting
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+## Running locally
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+The dev server starts at `http://localhost:5173` by default.
+
+## Available commands
+
+| Command | Description |
+|---|---|
+| `npm run dev` | Start the Vite dev server with hot reload |
+| `npm run build` | Type-check (`tsc -b`) and build for production |
+| `npm run lint` | Run oxlint over the project |
+| `npm run preview` | Preview the production build locally |
+
+## Status
+
+This is a rough working prototype for evaluating the Mason Nexus concept, not an official George Mason University product. Nothing entered into it is persisted beyond the current browser session.

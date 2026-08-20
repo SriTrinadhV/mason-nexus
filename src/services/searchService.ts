@@ -28,7 +28,7 @@ const SEMANTIC_HINTS: { pattern: RegExp; note: string; keywords: string[] }[] = 
   },
   {
     pattern: /(job|gig|paid|hire)/i,
-    note: 'Mason Commons focuses on peer collaboration, not paid gig work — showing related peer opportunities instead.',
+    note: 'Mason Nexus focuses on peer collaboration, not paid gig work — showing related peer opportunities instead.',
     keywords: ['opportunity', 'collaborate', 'project'],
   },
 ]

@@ -25,7 +25,7 @@ export default function Sidebar() {
           M
         </div>
         <span className="text-[15px] font-semibold tracking-tight text-gray-900" style={{ fontFamily: 'var(--font-display)' }}>
-          Mason Commons
+          Mason Nexus
         </span>
       </div>
 
