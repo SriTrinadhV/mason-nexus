@@ -29,7 +29,15 @@ export default function SettingsPage() {
 
   const handleSignOut = () => {
     signOut()
-    navigate('/')
+    // Settings is rendered inside RequireOnboardedUser (see App.tsx), which
+    // is still mounted at this exact moment. The instant signOut() flips
+    // authStatus, that guard's own render redirects to /login — and because
+    // that happens as part of the same React commit as this handler, it can
+    // land *after* a plain `navigate('/')` called here, silently overriding
+    // the intended destination. Deferring to the next macrotask lets the
+    // guard's redirect settle first, so this call reliably goes last and
+    // wins, landing on the public landing page as intended.
+    setTimeout(() => navigate('/'), 0)
   }
 
   return (
