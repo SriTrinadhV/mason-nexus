@@ -61,9 +61,28 @@ function tokenize(text: string): string[] {
     .filter((t) => t.length > 1 && !STOPWORDS.has(t))
 }
 
+// Matches "cs 421", "cs421", "math 125", etc. — a short letter prefix
+// immediately followed by a course number — so a course-code-shaped query
+// can be told apart from a bare subject prefix like "cs" on its own.
+const COURSE_CODE_PATTERN = /\b([a-z]{2,4})\s*(\d{2,4})\b/g
+
+function extractCourseCodePairs(normalizedQuery: string): [letters: string, digits: string][] {
+  return [...normalizedQuery.matchAll(COURSE_CODE_PATTERN)].map(([, letters, digits]) => [letters, digits])
+}
+
 interface WeightedField {
   text: string
   weight: number
+  // Marks fields that hold actual course codes (a student's enrolled
+  // courses, a study group's course, a class community's name). On these
+  // fields specifically, a short subject-prefix token that's part of a
+  // detected "letters + number" query pair (e.g. "cs" from "cs 421") only
+  // counts as a match if the paired number also matches *this same field* —
+  // otherwise "cs" alone would equally match CS 310, CS 330, CS 421, etc.,
+  // which is exactly the over-matching bug this guards against. A bare
+  // subject search with no course number ("cs") is unaffected and still
+  // matches broadly, since no pair is detected in that case.
+  strictCourse?: boolean
 }
 
 /**
@@ -77,7 +96,12 @@ interface WeightedField {
  * matching the old behavior. An entity with zero matched tokens scores 0 and
  * is excluded.
  */
-function scoreEntity(tokens: string[], normalizedQuery: string, fields: WeightedField[]): number {
+function scoreEntity(
+  tokens: string[],
+  normalizedQuery: string,
+  coursePairs: [letters: string, digits: string][],
+  fields: WeightedField[],
+): number {
   if (tokens.length === 0) return 0
   let score = 0
   const matchedTokens = new Set<string>()
@@ -87,10 +111,13 @@ function scoreEntity(tokens: string[], normalizedQuery: string, fields: Weighted
     const normalizedField = normalize(field.text)
     const fieldWords = normalizedField.split(/[^a-z0-9]+/).filter(Boolean)
     for (const token of tokens) {
-      if (fieldWords.some((word) => word.startsWith(token))) {
-        score += field.weight
-        matchedTokens.add(token)
+      if (!fieldWords.some((word) => word.startsWith(token))) continue
+      if (field.strictCourse) {
+        const pair = coursePairs.find(([letters]) => letters === token)
+        if (pair && !fieldWords.some((word) => word.startsWith(pair[1]))) continue
       }
+      score += field.weight
+      matchedTokens.add(token)
     }
     if (normalizedQuery.length > 1 && normalizedField.includes(normalizedQuery)) {
       score += 5
@@ -132,12 +159,13 @@ export function search(query: string, currentUserId?: string): Promise<SearchRes
   // Degenerate case (query was entirely stopwords/punctuation): fall back to
   // the whole normalized query so the search still does *something* useful.
   const effectiveTokens = tokens.length > 0 ? tokens : [normalizedQuery]
+  const coursePairs = extractCourseCodePairs(normalizedQuery)
 
   const matchedCommunities = rankAndTake(
     communities,
     (c) =>
-      scoreEntity(effectiveTokens, normalizedQuery, [
-        { text: c.name, weight: 3 },
+      scoreEntity(effectiveTokens, normalizedQuery, coursePairs, [
+        { text: c.name, weight: 3, strictCourse: true },
         { text: c.tags.join(' '), weight: 2 },
         { text: c.description, weight: 1 },
       ]),
@@ -147,7 +175,7 @@ export function search(query: string, currentUserId?: string): Promise<SearchRes
   const matchedPosts = rankAndTake(
     posts,
     (p) =>
-      scoreEntity(effectiveTokens, normalizedQuery, [
+      scoreEntity(effectiveTokens, normalizedQuery, coursePairs, [
         { text: p.title, weight: 3 },
         { text: p.body, weight: 1 },
       ]),
@@ -157,9 +185,9 @@ export function search(query: string, currentUserId?: string): Promise<SearchRes
   const matchedStudents = rankAndTake(
     students.filter((s) => s.id !== currentUserId && s.discoverable !== false),
     (s) =>
-      scoreEntity(effectiveTokens, normalizedQuery, [
+      scoreEntity(effectiveTokens, normalizedQuery, coursePairs, [
         { text: s.displayName, weight: 3 },
-        { text: s.courses.join(' '), weight: 2 },
+        { text: s.courses.join(' '), weight: 2, strictCourse: true },
         { text: s.interests.join(' '), weight: 2 },
         { text: s.skills.join(' '), weight: 2 },
         { text: s.major, weight: 1 },
@@ -170,9 +198,9 @@ export function search(query: string, currentUserId?: string): Promise<SearchRes
   const matchedGroups = rankAndTake(
     studyGroups,
     (g) =>
-      scoreEntity(effectiveTokens, normalizedQuery, [
-        { text: g.title, weight: 3 },
-        { text: g.courseCode, weight: 3 },
+      scoreEntity(effectiveTokens, normalizedQuery, coursePairs, [
+        { text: g.title, weight: 3, strictCourse: true },
+        { text: g.courseCode, weight: 3, strictCourse: true },
         { text: g.description, weight: 1 },
       ]),
     6,
@@ -181,7 +209,7 @@ export function search(query: string, currentUserId?: string): Promise<SearchRes
   const matchedOpportunities = rankAndTake(
     opportunities,
     (o) =>
-      scoreEntity(effectiveTokens, normalizedQuery, [
+      scoreEntity(effectiveTokens, normalizedQuery, coursePairs, [
         { text: o.title, weight: 3 },
         { text: o.requiredSkills.join(' '), weight: 2 },
         { text: o.description, weight: 1 },

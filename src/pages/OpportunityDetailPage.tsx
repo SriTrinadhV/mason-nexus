@@ -77,12 +77,19 @@ export default function OpportunityDetailPage() {
           <div className="flex flex-wrap gap-2">
             {opportunity.interestedStudentIds.map((sid) => {
               const s = getStudentById(sid)
-              return s ? (
+              // Same discoverability rule as everywhere else people are
+              // surfaced (People discovery/matching/search) — a student who
+              // turned off "discoverable in People discovery" shouldn't be
+              // named in this public list either. Their interest is still
+              // recorded (interestedStudentIds is untouched); they're just
+              // not displayed here. The current user always sees themself.
+              if (!s || (s.discoverable === false && s.id !== currentUser.id)) return null
+              return (
                 <div key={sid} className="flex items-center gap-2 rounded-full border border-gray-200 bg-white py-1 pl-1 pr-3 text-sm">
                   <Avatar name={s.displayName} color={s.avatarColor} size="sm" />
                   {s.displayName}
                 </div>
-              ) : null
+              )
             })}
           </div>
         </div>

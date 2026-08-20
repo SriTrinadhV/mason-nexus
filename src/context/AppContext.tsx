@@ -100,7 +100,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         addNotification({
           type: 'community_joined',
           title: `You joined ${community.name}`,
-          body: `You're now a member of ${community.name}. Check out recent posts and discussions.`,
+          body: `You joined ${community.name}. Check out recent posts and discussions.`,
           linkTo: `/communities/${community.id}`,
         })
       }
