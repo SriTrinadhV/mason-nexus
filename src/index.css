@@ -1,18 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
-  /* GMU-inspired identity: forest green + gold, kept subtle and modern */
-  --color-mason-green-50: #eef5f1;
-  --color-mason-green-100: #d7e8de;
-  --color-mason-green-200: #b0d1bd;
-  --color-mason-green-300: #82b599;
-  --color-mason-green-400: #4f9273;
-  --color-mason-green-500: #2f7355;
-  --color-mason-green-600: #235c44;
-  --color-mason-green-700: #1c4a37;
-  --color-mason-green-800: #163a2b;
-  --color-mason-green-900: #0f2a1f;
+  /* GMU-inspired identity: forest green is the platform's primary color —
+     white canvas, green identity, yellow reserved for small accent moments
+     only (see mason-gold below). Tuned for richer saturation and clearer
+     contrast steps than the original palette while staying the same
+     recognizable "Mason green" hue. */
+  --color-mason-green-50: #eef7f2;
+  --color-mason-green-100: #d7ecdf;
+  --color-mason-green-200: #aed9c2;
+  --color-mason-green-300: #7cbd9c;
+  --color-mason-green-400: #479a72;
+  --color-mason-green-500: #297a55;
+  --color-mason-green-600: #1e6245;
+  --color-mason-green-700: #184e38;
+  --color-mason-green-800: #133c2b;
+  --color-mason-green-900: #0d2c1f;
 
+  /* Accent only — used sparingly for small highlights (a badge, an icon, a
+     "simulated AI" note), never as a second primary/CTA color. */
   --color-mason-gold-50: #fdf8ec;
   --color-mason-gold-100: #faedc7;
   --color-mason-gold-200: #f4d98a;
@@ -22,7 +29,14 @@
   --color-mason-gold-600: #a56f17;
   --color-mason-gold-700: #7f5416;
 
+  /* Neutral canvas — a faint green-tinted off-white instead of a flat gray,
+     so the page background itself carries a hint of the platform's
+     identity. Replaces the raw #f7f8f6 hex previously repeated across
+     several pages. */
+  --color-canvas: #f6f8f6;
+
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
 html {
@@ -31,7 +45,7 @@ html {
 
 body {
   font-family: var(--font-sans);
-  background-color: #f7f8f6;
+  background-color: var(--color-canvas);
   color: #1a1f1c;
 }
 
@@ -58,4 +72,50 @@ body {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+@layer components {
+  /* Shared button language. Only the shell and net-new UI adopt these
+     classes directly — most existing per-page buttons already reference the
+     same mason-green/gray tokens inline and pick up the palette refresh
+     automatically, so this stays additive rather than a mass find/replace. */
+  .btn,
+  .btn-primary,
+  .btn-secondary,
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg text-sm font-semibold outline-none transition disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .btn:focus-visible,
+  .btn-primary:focus-visible,
+  .btn-secondary:focus-visible,
+  .btn-ghost:focus-visible {
+    @apply outline-2 outline-offset-2 outline-mason-green-500;
+  }
+  .btn-primary {
+    @apply bg-mason-green-600 text-white hover:bg-mason-green-700 active:bg-mason-green-800;
+  }
+  .btn-secondary {
+    @apply border border-gray-200 bg-white text-gray-700 hover:border-mason-green-300 hover:bg-mason-green-50/60;
+  }
+  .btn-ghost {
+    @apply text-gray-600 hover:bg-gray-100;
+  }
+
+  .card {
+    @apply rounded-xl border border-gray-200 bg-white transition;
+  }
+  .card-hover {
+    @apply rounded-xl border border-gray-200 bg-white transition hover:border-mason-green-200 hover:shadow-[0_2px_10px_-4px_rgba(30,98,69,0.18)];
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

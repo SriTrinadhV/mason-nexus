@@ -31,7 +31,9 @@ export default function StudyGroupsPage() {
     <div className="space-y-5 pb-8">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Study Groups</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900" style={{ fontFamily: 'var(--font-display)' }}>
+            Study Groups
+          </h1>
           <p className="mt-1 text-sm text-gray-500">Find a group, or start one for your course.</p>
         </div>
         <button

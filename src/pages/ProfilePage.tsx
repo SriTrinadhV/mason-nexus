@@ -55,7 +55,7 @@ export default function ProfilePage() {
 
   return (
     <div className="space-y-5 pb-8">
-      <div className="rounded-2xl border border-gray-200 bg-white p-5">
+      <div className="card p-5">
         <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             <Avatar name={student.displayName} color={student.avatarColor} size="xl" />
@@ -101,7 +101,7 @@ export default function ProfilePage() {
       </div>
 
       {isMe && editing ? (
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 space-y-5">
+        <div className="card p-5 space-y-5">
           <div>
             <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-gray-700">
               <input type="checkbox" checked={pseudonymous} onChange={(e) => setPseudonymous(e.target.checked)} className="accent-mason-green-600" />
@@ -156,7 +156,7 @@ export default function ProfilePage() {
           </div>
         </div>
       ) : (
-        <div className="rounded-2xl border border-gray-200 bg-white p-5">
+        <div className="card p-5">
           <p className="text-sm text-gray-600">{student.bio}</p>
         </div>
       )}
@@ -205,7 +205,7 @@ export default function ProfilePage() {
 
 function ProfileSection({ title, icon: Icon, children }: { title: string; icon?: React.ElementType; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-5">
+    <div className="card p-5">
       <div className="mb-3 flex items-center gap-1.5">
         {Icon && <Icon size={15} className="text-gray-400" />}
         <h2 className="text-sm font-semibold text-gray-700">{title}</h2>

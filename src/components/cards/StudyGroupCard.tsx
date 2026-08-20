@@ -14,13 +14,15 @@ export default function StudyGroupCard({
   const isFull = group.memberIds.length >= group.capacity
 
   return (
-    <div className="flex flex-col rounded-xl border border-gray-200 bg-white p-4 transition hover:border-gray-300 hover:shadow-sm">
+    <div className="card-hover flex flex-col p-4">
       <div className="mb-2 flex items-start justify-between gap-2">
         <div>
           <Tag tone="green" className="mb-2">
             {group.courseCode}
           </Tag>
-          <h3 className="font-semibold text-gray-900">{group.title}</h3>
+          <h3 className="font-semibold text-gray-900" style={{ fontFamily: 'var(--font-display)' }}>
+            {group.title}
+          </h3>
         </div>
       </div>
       <p className="line-clamp-2 mb-3 text-sm text-gray-600">{group.description}</p>
@@ -39,7 +41,13 @@ export default function StudyGroupCard({
         <button
           onClick={() => onJoin(group.id)}
           disabled={joined || isFull}
-          className="focus-ring mt-auto rounded-lg bg-mason-green-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-mason-green-700 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
+          className={`focus-ring mt-auto rounded-lg px-3 py-2 text-sm font-medium transition disabled:cursor-not-allowed ${
+            joined
+              ? 'bg-mason-green-50 text-mason-green-700 ring-1 ring-inset ring-mason-green-200'
+              : isFull
+                ? 'bg-gray-100 text-gray-400'
+                : 'bg-mason-green-600 text-white hover:bg-mason-green-700'
+          }`}
         >
           {joined ? 'You’re in this group' : isFull ? 'Group is full' : 'Join group'}
         </button>

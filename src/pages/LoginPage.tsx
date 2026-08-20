@@ -27,16 +27,23 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#f7f8f6] px-4">
+    <div className="flex min-h-screen items-center justify-center bg-canvas px-4">
       <div className="w-full max-w-sm">
-        <Link to="/" className="mb-6 flex items-center justify-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-mason-green-600 text-sm font-bold text-white">
+        <Link to="/" className="mb-6 flex items-center justify-center gap-2.5">
+          <div
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-mason-green-600 text-sm font-bold text-white"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
             M
           </div>
-          <span className="font-semibold text-gray-900">Mason Commons</span>
+          <span className="text-[15px] font-semibold tracking-tight text-gray-900" style={{ fontFamily: 'var(--font-display)' }}>
+            Mason Commons
+          </span>
         </Link>
         <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-          <h1 className="mb-1 text-xl font-semibold text-gray-900">Welcome back</h1>
+          <h1 className="mb-1 text-xl font-semibold text-gray-900" style={{ fontFamily: 'var(--font-display)' }}>
+            Welcome back
+          </h1>
           <p className="mb-5 text-sm text-gray-500">Log in with your GMU email.</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">

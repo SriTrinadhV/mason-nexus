@@ -59,18 +59,22 @@ export default function CommunityDetailPage() {
         <ArrowLeft size={15} /> Communities
       </Link>
 
-      <div className="rounded-2xl border border-gray-200 bg-white p-5">
+      <div className="card p-5">
         <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
           <div>
             <span className={`mb-2 inline-flex rounded-lg px-2 py-1 text-xs font-semibold uppercase tracking-wide ${accent.badge}`}>
               {community.category}
             </span>
-            <h1 className="text-2xl font-bold text-gray-900">{community.name}</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-gray-900" style={{ fontFamily: 'var(--font-display)' }}>
+              {community.name}
+            </h1>
           </div>
           <button
             onClick={() => (joined ? leaveCommunity(community.id) : joinCommunity(community.id))}
             className={`focus-ring rounded-lg px-4 py-2 text-sm font-medium transition ${
-              joined ? 'bg-gray-100 text-gray-600 hover:bg-gray-200' : 'bg-mason-green-600 text-white hover:bg-mason-green-700'
+              joined
+                ? 'bg-mason-green-50 text-mason-green-700 ring-1 ring-inset ring-mason-green-200 hover:bg-mason-green-100'
+                : 'bg-mason-green-600 text-white hover:bg-mason-green-700'
             }`}
           >
             {joined ? 'Joined' : 'Join'}
@@ -167,7 +171,7 @@ export default function CommunityDetailPage() {
       )}
 
       {tab === 'about' && (
-        <div className="rounded-xl border border-gray-200 bg-white p-5 text-sm text-gray-600">
+        <div className="card p-5 text-sm text-gray-600">
           <p className="mb-3">{community.description}</p>
           <dl className="grid grid-cols-2 gap-3 text-sm">
             <div>

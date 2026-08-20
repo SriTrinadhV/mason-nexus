@@ -26,7 +26,8 @@ export default function Avatar({
 }) {
   return (
     <div
-      className={`flex shrink-0 items-center justify-center rounded-full font-semibold text-white ${getAvatarBgClass(color)} ${sizeClasses[size]} ${className}`}
+      className={`flex shrink-0 items-center justify-center rounded-full font-semibold text-white ring-2 ring-white ${getAvatarBgClass(color)} ${sizeClasses[size]} ${className}`}
+      style={{ fontFamily: 'var(--font-display)' }}
       aria-hidden="true"
     >
       {initials(name)}

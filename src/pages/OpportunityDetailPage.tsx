@@ -40,8 +40,10 @@ export default function OpportunityDetailPage() {
         <ArrowLeft size={15} /> Opportunities
       </Link>
 
-      <div className="rounded-2xl border border-gray-200 bg-white p-5">
-        <h1 className="mb-2 text-xl font-bold text-gray-900">{opportunity.title}</h1>
+      <div className="card p-5">
+        <h1 className="mb-2 text-xl font-bold tracking-tight text-gray-900" style={{ fontFamily: 'var(--font-display)' }}>
+          {opportunity.title}
+        </h1>
         <div className="mb-3 flex items-center gap-2 text-sm text-gray-500">
           {poster && <Avatar name={poster.displayName} color={poster.avatarColor} size="sm" />}
           <span>
@@ -65,7 +67,11 @@ export default function OpportunityDetailPage() {
         <button
           onClick={() => recordOpportunityInterest(opportunity.id).then(load)}
           disabled={interested}
-          className="focus-ring rounded-lg bg-mason-gold-400 px-4 py-2 text-sm font-semibold text-mason-green-900 hover:bg-mason-gold-500 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
+          className={`focus-ring rounded-lg px-4 py-2 text-sm font-semibold transition disabled:cursor-not-allowed ${
+            interested
+              ? 'bg-mason-green-50 text-mason-green-700 ring-1 ring-inset ring-mason-green-200'
+              : 'bg-mason-green-600 text-white hover:bg-mason-green-700'
+          }`}
         >
           {interested ? "You're interested" : "I'm interested"}
         </button>

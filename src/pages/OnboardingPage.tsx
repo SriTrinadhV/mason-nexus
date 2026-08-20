@@ -50,7 +50,7 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f7f8f6] px-4 py-8">
+    <div className="min-h-screen bg-canvas px-4 py-8">
       <div className="mx-auto max-w-lg">
         <div className="mb-6">
           <div className="mb-2 flex items-center justify-between text-xs font-medium text-gray-500">
@@ -174,7 +174,9 @@ export default function OnboardingPage() {
 function StepShell({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
   return (
     <div>
-      <h2 className="mb-1 text-lg font-semibold text-gray-900">{title}</h2>
+      <h2 className="mb-1 text-lg font-semibold text-gray-900" style={{ fontFamily: 'var(--font-display)' }}>
+        {title}
+      </h2>
       {description && <p className="mb-4 text-sm text-gray-500">{description}</p>}
       {!description && <div className="mb-4" />}
       {children}

@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react'
 
 const toneClasses: Record<string, string> = {
-  neutral: 'bg-gray-100 text-gray-700',
-  green: 'bg-mason-green-50 text-mason-green-700',
-  gold: 'bg-mason-gold-50 text-mason-gold-700',
+  neutral: 'bg-gray-100 text-gray-600',
+  green: 'bg-mason-green-50 text-mason-green-700 ring-1 ring-inset ring-mason-green-100',
+  gold: 'bg-mason-gold-50 text-mason-gold-700 ring-1 ring-inset ring-mason-gold-100',
 }
 
 export default function Tag({

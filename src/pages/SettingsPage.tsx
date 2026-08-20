@@ -35,7 +35,9 @@ export default function SettingsPage() {
   return (
     <div className="max-w-2xl space-y-5 pb-8">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900" style={{ fontFamily: 'var(--font-display)' }}>
+          Settings
+        </h1>
         <p className="mt-1 text-sm text-gray-500">Manage your profile preferences, notifications, and privacy.</p>
       </div>
 
@@ -85,7 +87,7 @@ export default function SettingsPage() {
 
 function SettingsSection({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-5">
+    <div className="card p-5">
       <h2 className="text-sm font-semibold text-gray-800">{title}</h2>
       {description && <p className="mb-3 mt-0.5 text-xs text-gray-500">{description}</p>}
       {!description && <div className="mb-3" />}

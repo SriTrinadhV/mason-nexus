@@ -59,7 +59,9 @@ export default function DiscoverPage() {
   return (
     <div className="space-y-8 pb-8">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Discover</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900" style={{ fontFamily: 'var(--font-display)' }}>
+          Discover
+        </h1>
         <p className="mt-1 text-sm text-gray-500">Browse people, communities, study groups, and opportunities beyond your top Home recommendations.</p>
       </div>
 
@@ -146,10 +148,14 @@ function DiscoverSection({
 }) {
   return (
     <section>
-      <div className="mb-3 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Icon size={18} className="text-mason-green-700" />
-          <h2 className="font-semibold text-gray-900">{title}</h2>
+      <div className="mb-3.5 flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-mason-green-50 text-mason-green-700">
+            <Icon size={16} />
+          </div>
+          <h2 className="font-semibold tracking-tight text-gray-900" style={{ fontFamily: 'var(--font-display)' }}>
+            {title}
+          </h2>
         </div>
         <Link to={viewAllTo} className="focus-ring flex items-center gap-1 text-sm font-medium text-mason-green-700 hover:underline">
           View all <ArrowRight size={14} />

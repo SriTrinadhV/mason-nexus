@@ -10,7 +10,9 @@ export default function NotificationsPage() {
     <div className="max-w-2xl space-y-4 pb-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Notifications</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900" style={{ fontFamily: 'var(--font-display)' }}>
+            Notifications
+          </h1>
           <p className="mt-1 text-sm text-gray-500">{unreadCount > 0 ? `${unreadCount} unread` : 'You\'re all caught up'}</p>
         </div>
         {unreadCount > 0 && (

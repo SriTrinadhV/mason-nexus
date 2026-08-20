@@ -18,20 +18,22 @@ export default function CommunityCard({
   const accent = getCommunityAccent(community.color)
 
   return (
-    <div className="flex flex-col rounded-xl border border-gray-200 bg-white p-4 transition hover:border-gray-300 hover:shadow-sm">
+    <div className="card-hover flex flex-col p-4">
       <div className="mb-3 flex items-start justify-between gap-2">
         <Link to={`/communities/${community.id}`} className="focus-ring rounded min-w-0">
-          <div className={`mb-2 inline-flex rounded-lg px-2 py-1 text-xs font-semibold uppercase tracking-wide ${accent.badge}`}>
+          <div className={`mb-2 inline-flex rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${accent.badge}`}>
             {community.category}
           </div>
-          <h3 className="font-semibold text-gray-900 truncate">{community.name}</h3>
+          <h3 className="truncate font-semibold text-gray-900" style={{ fontFamily: 'var(--font-display)' }}>
+            {community.name}
+          </h3>
         </Link>
         {onJoinToggle && (
           <button
             onClick={() => onJoinToggle(community.id)}
             className={`focus-ring shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium transition ${
               joined
-                ? 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'bg-mason-green-50 text-mason-green-700 ring-1 ring-inset ring-mason-green-200 hover:bg-mason-green-100'
                 : 'bg-mason-green-600 text-white hover:bg-mason-green-700'
             }`}
           >

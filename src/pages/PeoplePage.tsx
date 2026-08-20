@@ -31,7 +31,9 @@ export default function PeoplePage() {
         <ArrowLeft size={15} /> Discover
       </Link>
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">People</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900" style={{ fontFamily: 'var(--font-display)' }}>
+          People
+        </h1>
         <p className="mt-1 text-sm text-gray-500">Students who share your classes, interests, skills, or communities.</p>
       </div>
 

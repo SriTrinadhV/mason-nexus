@@ -14,10 +14,7 @@ const kindIcon: Record<Recommendation['kind'], React.ElementType> = {
 export default function RecommendationCard({ recommendation }: { recommendation: Recommendation }) {
   const Icon = kindIcon[recommendation.kind]
   return (
-    <Link
-      to={recommendation.linkTo}
-      className="focus-ring flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 transition hover:border-mason-green-300 hover:shadow-sm"
-    >
+    <Link to={recommendation.linkTo} className="card-hover focus-ring flex items-start gap-3 p-4">
       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-mason-green-50 text-mason-green-700">
         <Icon size={18} />
       </div>

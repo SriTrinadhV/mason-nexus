@@ -17,7 +17,7 @@ export default function OpportunityCard({
   const poster = getStudentById(opportunity.postedBy)
 
   return (
-    <div className="flex flex-col rounded-xl border border-gray-200 bg-white p-4 transition hover:border-gray-300 hover:shadow-sm">
+    <div className="card-hover flex flex-col p-4">
       <Link to={`/opportunities/${opportunity.id}`} className="focus-ring rounded">
         <h3 className="font-semibold text-gray-900">{opportunity.title}</h3>
       </Link>
@@ -43,7 +43,11 @@ export default function OpportunityCard({
         <button
           onClick={() => onExpressInterest(opportunity.id)}
           disabled={interested}
-          className="focus-ring mt-3 rounded-lg bg-mason-gold-400 px-3 py-2 text-sm font-semibold text-mason-green-900 transition hover:bg-mason-gold-500 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
+          className={`focus-ring mt-3 rounded-lg px-3 py-2 text-sm font-semibold transition disabled:cursor-not-allowed ${
+            interested
+              ? 'bg-mason-green-50 text-mason-green-700 ring-1 ring-inset ring-mason-green-200'
+              : 'bg-mason-green-600 text-white hover:bg-mason-green-700'
+          }`}
         >
           {interested ? "You're interested" : "I'm interested"}
         </button>

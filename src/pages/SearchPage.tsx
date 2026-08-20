@@ -41,7 +41,9 @@ export default function SearchPage() {
   return (
     <div className="space-y-5 pb-8">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Search</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900" style={{ fontFamily: 'var(--font-display)' }}>
+          Search
+        </h1>
         <p className="mt-1 text-sm text-gray-500">Search across communities, posts, people, study groups, and opportunities.</p>
       </div>
 

@@ -23,7 +23,7 @@ export default function PostCard({
   const author = getStudentById(post.authorId)
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4">
+    <div className="card p-4">
       <div className="mb-2 flex items-center gap-3">
         <Avatar name={author?.displayName ?? 'Student'} color={author?.avatarColor} size="sm" />
         <div className="min-w-0">
@@ -31,7 +31,9 @@ export default function PostCard({
           <p className="text-xs text-gray-400">{post.createdAt}</p>
         </div>
       </div>
-      <h3 className="mb-1 font-semibold text-gray-900">{post.title}</h3>
+      <h3 className="mb-1 font-semibold text-gray-900" style={{ fontFamily: 'var(--font-display)' }}>
+        {post.title}
+      </h3>
       <p className="mb-3 text-sm text-gray-600">{post.body}</p>
       <div className="mb-3 flex flex-wrap gap-1.5">
         {post.tags.map((tag) => (

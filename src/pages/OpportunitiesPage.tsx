@@ -23,7 +23,9 @@ export default function OpportunitiesPage() {
   return (
     <div className="space-y-5 pb-8">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Opportunities</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900" style={{ fontFamily: 'var(--font-display)' }}>
+          Opportunities
+        </h1>
         <p className="mt-1 text-sm text-gray-500">Peer collaboration requests from students and student organizations — not paid gig work.</p>
       </div>
 

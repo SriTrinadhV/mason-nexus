@@ -13,20 +13,30 @@ export default function MobileNav() {
   return (
     <nav
       aria-label="Primary"
-      className="fixed inset-x-0 bottom-0 z-40 flex border-t border-gray-200 bg-white pb-[env(safe-area-inset-bottom)] lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 flex border-t border-gray-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md lg:hidden"
     >
       {navItems.map((item) => (
         <NavLink
           key={item.to}
           to={item.to}
           className={({ isActive }) =>
-            `focus-ring flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs font-medium ${
+            `focus-ring relative flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-medium transition ${
               isActive ? 'text-mason-green-700' : 'text-gray-500'
             }`
           }
         >
-          <item.icon size={20} />
-          {item.label}
+          {({ isActive }) => (
+            <>
+              <span
+                aria-hidden="true"
+                className={`absolute top-0 h-0.5 w-8 rounded-full bg-mason-green-600 transition-opacity ${
+                  isActive ? 'opacity-100' : 'opacity-0'
+                }`}
+              />
+              <item.icon size={20} strokeWidth={isActive ? 2.4 : 2} />
+              {item.label}
+            </>
+          )}
         </NavLink>
       ))}
     </nav>
