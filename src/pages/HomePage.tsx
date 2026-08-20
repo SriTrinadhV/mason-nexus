@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Activity, ArrowRight, MessageSquare, Sparkles, Users } from 'lucide-react'
 import { useApp } from '../context/AppContext'
-import IntentSelector from '../components/IntentSelector'
+import IntentSelector, { intentIcon } from '../components/IntentSelector'
 import RecommendationCard from '../components/cards/RecommendationCard'
 import CommunityCard from '../components/cards/CommunityCard'
 import StudentCard from '../components/cards/StudentCard'
@@ -215,14 +215,15 @@ function IntentPanel({
 }) {
   const { currentUser, joinCommunity, recordOpportunityInterest } = useApp()
   const option = getIntentOption(intent)
+  const Icon = intentIcon[intent]
 
   return (
     <section className="rounded-2xl border border-mason-green-200 bg-mason-green-50/40 p-4 sm:p-5">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-xl" aria-hidden="true">
-            {option?.emoji}
-          </span>
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-mason-green-700 ring-1 ring-mason-green-100">
+            <Icon size={18} strokeWidth={1.75} aria-hidden="true" />
+          </div>
           <div>
             <h2 className="font-semibold text-gray-900">{option?.label}</h2>
             <p className="text-xs text-gray-500">{option?.description}</p>

@@ -12,7 +12,6 @@ export type Intent =
 export interface IntentOption {
   id: Intent
   label: string
-  emoji: string
   description: string
 }
 
