@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ShieldCheck } from 'lucide-react'
+import { ShieldCheck, Sparkles } from 'lucide-react'
 import { useApp } from '../context/AppContext'
 
 export default function SignupPage() {
@@ -98,7 +98,14 @@ export default function SignupPage() {
             </button>
           </form>
 
-          <div className="mt-4 flex items-start gap-2 rounded-lg bg-gray-50 p-3 text-xs text-gray-500">
+          <div className="mt-4 rounded-lg border border-mason-green-100 bg-mason-green-50 p-3">
+            <p className="flex items-center gap-1.5 text-xs font-semibold text-mason-green-700">
+              <Sparkles size={13} /> Try Mason Nexus
+            </p>
+            <p className="mt-1 text-xs text-gray-600">Sign up with any @gmu.edu email address to explore the prototype.</p>
+          </div>
+
+          <div className="mt-3 flex items-start gap-2 rounded-lg bg-gray-50 p-3 text-xs text-gray-500">
             <ShieldCheck size={15} className="mt-0.5 shrink-0 text-gray-400" />
             <span>Signup is restricted to @gmu.edu / @masonlive.gmu.edu email addresses. This is a domain check, not real institutional SSO verification.</span>
           </div>
