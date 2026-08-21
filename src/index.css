@@ -67,51 +67,62 @@
   --font-display: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
-/* Dark mode — a restrained dark charcoal-green, not a generic black theme.
-   Only redeclares the same token names already used everywhere via Tailwind
-   utility classes (bg-white, text-gray-500, bg-mason-green-50, ...), so the
-   entire app reflows into dark mode without any component changes. Applied
-   via a `data-theme` attribute on <html> (see AppContext.tsx), not a media
-   query — this project intentionally ships explicit Light/Dark only. */
+/* Dark mode — neutral charcoal interface first, Mason identity second.
+   The canvas/white/gray ramp below is genuinely neutral (no green cast) —
+   that's the fix for the earlier attempt, which used a faintly
+   green-tinted neutral scale for canvas/cards/borders, so virtually every
+   surface in the app shared the same hue family and green stopped reading
+   as an accent. Mason green/gold are now reserved for the recognizable
+   500-800 steps (buttons, active states, icons, borders-when-emphasized);
+   their 50/100 wash steps are deliberately kept close to neutral, since a
+   saturated dark tint reads far louder than the equivalent pale light-mode
+   wash does — same relative saturation, very different perceived weight.
+   Only redeclares the same token names already used everywhere via
+   Tailwind utility classes (bg-white, text-gray-500, bg-mason-green-50,
+   ...), so the entire app reflows into dark mode without per-component
+   dark: classes. Applied via a `data-theme` attribute on <html> (see
+   AppContext.tsx), not a media query — Light/Dark only, no system mode. */
 :root[data-theme='dark'] {
-  --color-canvas: #0c130f;
-  --color-ink: #f5faf6;
-  --color-white: #141d18;
-  --color-gray-50: #1a251f;
-  --color-gray-100: #22302a;
-  --color-gray-200: #2c3b34;
-  --color-gray-300: #44574d;
-  --color-gray-400: #66796f;
-  --color-gray-500: #93a69a;
-  --color-gray-600: #b6c4bb;
-  --color-gray-700: #d4ddd7;
-  --color-gray-800: #e8efe9;
-  --color-gray-900: #f5faf6;
-  --color-red-50: #2a1416;
-  --color-red-100: #3d2024;
-  --color-red-600: #e2645d;
-  --color-red-700: #c8534c;
-  --color-red-800: #f5b8b3;
+  --color-canvas: #0d1117;
+  --color-ink: #f1f5f3;
+  --color-white: #161b22;
+  --color-gray-50: #1c232c;
+  --color-gray-100: #212933;
+  --color-gray-200: #2a323c;
+  --color-gray-300: #3a4451;
+  --color-gray-400: #7c8791;
+  --color-gray-500: #a7b0b8;
+  --color-gray-600: #c2c9cd;
+  --color-gray-700: #dde2e4;
+  --color-gray-800: #ecf0f1;
+  --color-gray-900: #f1f5f3;
+  --color-red-50: #2a1618;
+  --color-red-100: #3d2226;
+  --color-red-600: #e5534b;
+  --color-red-700: #cc453e;
+  --color-red-800: #f5a8a3;
 
-  --color-mason-green-50: #12241c;
-  --color-mason-green-100: #1a3327;
-  --color-mason-green-200: #2d5943;
+  /* 50/100 stay near-neutral on purpose (a whisper of green, not a wash) —
+     600/700 carry the actual recognizable "Mason green" identity. */
+  --color-mason-green-50: #17211c;
+  --color-mason-green-100: #1c2c24;
+  --color-mason-green-200: #2f5943;
   --color-mason-green-300: #3f7a5c;
-  --color-mason-green-400: #54936f;
-  --color-mason-green-500: #3ea173;
-  --color-mason-green-600: #349566;
-  --color-mason-green-700: #4fb686;
-  --color-mason-green-800: #2a7350;
-  --color-mason-green-900: #163f2c;
+  --color-mason-green-400: #52926d;
+  --color-mason-green-500: #34a67c;
+  --color-mason-green-600: #2e9b73;
+  --color-mason-green-700: #4db892;
+  --color-mason-green-800: #257d5d;
+  --color-mason-green-900: #163d2d;
 
-  --color-mason-gold-50: #241c0c;
-  --color-mason-gold-100: #3a2c12;
-  --color-mason-gold-200: #5c481d;
-  --color-mason-gold-300: #7a5f25;
-  --color-mason-gold-400: #a67f2f;
-  --color-mason-gold-500: #d9a53a;
-  --color-mason-gold-600: #e6bb5c;
-  --color-mason-gold-700: #f0cc7e;
+  --color-mason-gold-50: #211c10;
+  --color-mason-gold-100: #2b2413;
+  --color-mason-gold-200: #4a3d1a;
+  --color-mason-gold-300: #6b5722;
+  --color-mason-gold-400: #8f742c;
+  --color-mason-gold-500: #d9a730;
+  --color-mason-gold-600: #e6b93f;
+  --color-mason-gold-700: #f0cc6e;
 }
 
 html {
