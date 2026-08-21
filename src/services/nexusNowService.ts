@@ -1,7 +1,4 @@
-import { communities, getCommunityById } from '../data/communities'
-import { posts, getPostsByCommunity } from '../data/posts'
-import { studyGroupSeekers } from '../data/studyGroups'
-import { opportunities } from '../data/opportunities'
+import { getCommunities, getCommunityById, getOpportunities, getPosts, getPostsByCommunity, getStudyGroupSeekers } from './dataStore'
 import type { Post, Recommendation, Student } from '../types'
 import { mockDelay } from './mockDelay'
 import { matchPeople, type PeopleMatch } from './peopleService'
@@ -10,15 +7,18 @@ import { matchPeople, type PeopleMatch } from './peopleService'
  * NEXUS NOW — the campus pulse layer.
  *
  * Every function here is deterministic and derived entirely from the same
- * mock activity data the rest of the app already uses (post likes/comments,
- * community post volume, opportunity interest counts, study-group seekers).
- * There is no real analytics pipeline or trending algorithm — this is a
- * prototype-honest ranking over existing demo data, consistent with the
- * "SIMULATED AI LAYER" already documented in recommendationService.ts.
+ * live data the rest of the app now reads from Supabase (post likes/
+ * comments, community post volume, opportunity interest counts, study-group
+ * seekers) — there is still no real analytics pipeline or trending
+ * algorithm, just a prototype-honest ranking over real persisted activity,
+ * consistent with the "SIMULATED AI LAYER" documented in
+ * recommendationService.ts. Only the data source changed in Phase 13; the
+ * ranking logic itself is untouched.
  *
  * Nothing here duplicates matching/discoverability logic: "Your Next
  * Connection" calls straight into peopleService's matchPeople(), which
- * already enforces self-exclusion and the Phase 2 discoverability rule.
+ * already enforces self-exclusion and reads from a profile cache that Row
+ * Level Security has already filtered for discoverability.
  */
 
 function postEngagementScore(post: Post): number {
@@ -28,10 +28,13 @@ function postEngagementScore(post: Post): number {
 /**
  * TRENDING AT MASON — the highest-engagement discussion, the community with
  * the most active posts right now, and the opportunity attracting the most
- * interest. Ranked by real (mock) engagement, not curated.
+ * interest. Ranked by real engagement, not curated.
  */
 export function getTrendingAtMason(limit = 3): Recommendation[] {
   const scored: (Recommendation & { score: number })[] = []
+  const posts = getPosts()
+  const communities = getCommunities()
+  const opportunities = getOpportunities()
 
   const topPost = [...posts].sort((a, b) => postEngagementScore(b) - postEngagementScore(a))[0]
   if (topPost) {
@@ -96,6 +99,9 @@ export function getTrendingAtMason(limit = 3): Recommendation[] {
  */
 export function getHappeningNow(excludePostIds: ReadonlySet<string> = new Set(), limit = 3): Recommendation[] {
   const items: Recommendation[] = []
+  const communities = getCommunities()
+  const posts = getPosts()
+  const studyGroupSeekers = getStudyGroupSeekers()
 
   if (studyGroupSeekers.length > 0) {
     const courseCounts = new Map<string, number>()

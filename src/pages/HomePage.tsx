@@ -15,7 +15,7 @@ import { getForYouFeedAsync, getIntentResultsAsync, type IntentResults } from '.
 import { getNexusNowPulseAsync, getYourNextConnectionAsync, type NexusNowPulse } from '../services/nexusNowService'
 import type { PeopleMatch } from '../services/peopleService'
 import { joinStudyGroup } from '../services/studyGroupService'
-import { getCommunityById } from '../data/communities'
+import { getCommunityById } from '../services/dataStore'
 import { getIntentOption } from '../data/intents'
 import type { Intent, Recommendation } from '../types'
 

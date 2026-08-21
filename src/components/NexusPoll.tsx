@@ -1,9 +1,12 @@
 import { Check, HelpCircle } from 'lucide-react'
 import { useApp } from '../context/AppContext'
-import { activePoll } from '../data/polls'
+import { getPoll } from '../services/dataStore'
 
 export default function NexusPoll() {
   const { pollVoteCounts, myPollVote, voteInPoll } = useApp()
+  const activePoll = getPoll()
+  if (!activePoll) return null
+
   const totalVotes = activePoll.options.reduce((sum, opt) => sum + (pollVoteCounts[opt.id] ?? 0), 0)
   const hasVoted = myPollVote !== null
 
