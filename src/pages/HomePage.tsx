@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Activity, ArrowRight, MessageSquare, Sparkles, Users } from 'lucide-react'
+import { ArrowRight, Radio, Sparkles, TrendingUp, UserPlus, Users } from 'lucide-react'
 import { useApp } from '../context/AppContext'
 import IntentSelector, { intentIcon } from '../components/IntentSelector'
+import NexusPoll from '../components/NexusPoll'
 import RecommendationCard from '../components/cards/RecommendationCard'
 import CommunityCard from '../components/cards/CommunityCard'
 import StudentCard from '../components/cards/StudentCard'
@@ -11,10 +12,10 @@ import OpportunityCard from '../components/cards/OpportunityCard'
 import EmptyState from '../components/common/EmptyState'
 import LoadingState from '../components/common/LoadingState'
 import { getForYouFeedAsync, getIntentResultsAsync, type IntentResults } from '../services/recommendationService'
+import { getNexusNowPulseAsync, getYourNextConnectionAsync, type NexusNowPulse } from '../services/nexusNowService'
+import type { PeopleMatch } from '../services/peopleService'
 import { joinStudyGroup } from '../services/studyGroupService'
 import { getCommunityById } from '../data/communities'
-import { getStudentById } from '../data/students'
-import { posts } from '../data/posts'
 import { getIntentOption } from '../data/intents'
 import type { Intent, Recommendation } from '../types'
 
@@ -29,11 +30,15 @@ export default function HomePage() {
   const { currentUser, joinCommunity } = useApp()
   const [intent, setIntent] = useState<Intent | null>(null)
   const [feed, setFeed] = useState<Recommendation[] | null>(null)
+  const [pulse, setPulse] = useState<NexusNowPulse | null>(null)
+  const [connections, setConnections] = useState<PeopleMatch[] | null>(null)
   const [intentResults, setIntentResults] = useState<IntentResults | null>(null)
   const [loadingIntent, setLoadingIntent] = useState(false)
 
   useEffect(() => {
     getForYouFeedAsync(currentUser).then(setFeed)
+    getNexusNowPulseAsync().then(setPulse)
+    getYourNextConnectionAsync(currentUser).then(setConnections)
   }, [currentUser])
 
   useEffect(() => {
@@ -79,6 +84,8 @@ export default function HomePage() {
 
       {!intent && (
         <>
+          <NexusNowSection pulse={pulse} connections={connections} />
+
           <section>
             <SectionHeader icon={Sparkles} title="For You" subtitle="Recommendations based on what you've shared" />
             {!feed ? (
@@ -114,11 +121,6 @@ export default function HomePage() {
               </div>
             )}
           </section>
-
-          <section>
-            <SectionHeader icon={Activity} title="Active Right Now" subtitle="A few things happening across your campus" />
-            <ActiveNow />
-          </section>
         </>
       )}
     </div>
@@ -141,60 +143,114 @@ function SectionHeader({ icon: Icon, title, subtitle }: { icon: React.ElementTyp
   )
 }
 
-function ActiveNow() {
-  const latestPost = posts[0]
-  const author = getStudentById(latestPost.authorId)
-  const community = getCommunityById(latestPost.communityId)
-
+/**
+ * NEXUS NOW — the campus pulse. This is the first thing a signed-in student
+ * sees: what's trending, what's timely and actionable, a two-second campus
+ * question, and a small number of genuinely relevant people to connect
+ * with. Every card links into a real, existing surface (a community, a
+ * study group, an opportunity, a profile) — nothing here is a dead end.
+ */
+function NexusNowSection({ pulse, connections }: { pulse: NexusNowPulse | null; connections: PeopleMatch[] | null }) {
   return (
-    <div className="space-y-2">
-      <Link
-        to={`/communities/${community?.id}`}
-        className="focus-ring flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 hover:border-mason-green-300 hover:shadow-sm"
-      >
-        <MessageSquare size={16} className="mt-0.5 shrink-0 text-mason-green-700" />
-        <div className="min-w-0">
-          <p className="text-sm font-medium text-gray-900">
-            New in {community?.name}: "{latestPost.title}"
-          </p>
-          <p className="text-xs text-gray-500">
-            {author?.displayName} · {latestPost.createdAt}
-          </p>
+    <section className="rounded-2xl border border-mason-green-200 bg-mason-green-50/30 p-4 sm:p-6">
+      <div className="mb-4 flex items-start gap-2.5">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-mason-green-700 ring-1 ring-mason-green-100">
+          <Radio size={18} strokeWidth={1.75} />
         </div>
-        <ArrowRight size={15} className="ml-auto mt-0.5 shrink-0 text-gray-300" />
-      </Link>
-      <Link
-        to="/study-groups"
-        className="focus-ring flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 hover:border-mason-green-300 hover:shadow-sm"
-      >
-        <Users size={16} className="mt-0.5 shrink-0 text-mason-green-700" />
-        <div className="min-w-0">
-          <p className="text-sm font-medium text-gray-900">A CS 310 study group is forming for the midterm</p>
-          <p className="text-xs text-gray-500">4/6 spots filled · Thursday, 6:00 PM</p>
+        <div>
+          <h2 className="font-semibold tracking-tight text-gray-900" style={{ fontFamily: 'var(--font-display)' }}>
+            Nexus Now
+          </h2>
+          <p className="text-xs text-gray-500">What's happening around Mason right now</p>
         </div>
-        <ArrowRight size={15} className="ml-auto mt-0.5 shrink-0 text-gray-300" />
-      </Link>
-      <Link
-        to="/opportunities"
-        className="focus-ring flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 hover:border-mason-green-300 hover:shadow-sm"
-      >
-        <Sparkles size={16} className="mt-0.5 shrink-0 text-mason-gold-500" />
-        <div className="min-w-0">
-          <p className="text-sm font-medium text-gray-900">New collaboration request: "Need a frontend developer for a student project"</p>
-          <p className="text-xs text-gray-500">Posted in Mason Developers</p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <PulseList
+          icon={TrendingUp}
+          title="Trending at Mason"
+          items={pulse?.trending}
+          emptyText="Nothing trending yet — check back soon."
+        />
+        <PulseList
+          icon={Radio}
+          title="Happening Now"
+          items={pulse?.happeningNow}
+          emptyText="No timely activity right now."
+        />
+      </div>
+
+      <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <NexusPoll />
+        <NextConnection connections={connections} />
+      </div>
+    </section>
+  )
+}
+
+function PulseList({
+  icon: Icon,
+  title,
+  items,
+  emptyText,
+}: {
+  icon: React.ElementType
+  title: string
+  items?: Recommendation[]
+  emptyText: string
+}) {
+  return (
+    <div>
+      <div className="mb-2 flex items-center gap-1.5 text-gray-700">
+        <Icon size={15} />
+        <h3 className="text-sm font-semibold">{title}</h3>
+      </div>
+      {!items ? (
+        <LoadingState count={2} label={`Loading ${title.toLowerCase()}`} />
+      ) : items.length === 0 ? (
+        <p className="rounded-xl border border-dashed border-gray-200 bg-white px-3 py-4 text-center text-xs text-gray-400">{emptyText}</p>
+      ) : (
+        <div className="space-y-2">
+          {items.map((item) => (
+            <RecommendationCard key={item.id} recommendation={item} />
+          ))}
         </div>
-        <ArrowRight size={15} className="ml-auto mt-0.5 shrink-0 text-gray-300" />
-      </Link>
-      <Link
-        to="/communities/photography-club"
-        className="focus-ring flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 hover:border-mason-green-300 hover:shadow-sm"
-      >
-        <Activity size={16} className="mt-0.5 shrink-0 text-mason-gold-500" />
-        <div className="min-w-0">
-          <p className="text-sm font-medium text-gray-900">Photography Club event tomorrow: Golden hour shoot at the Quad</p>
-          <p className="text-xs text-gray-500">187 members</p>
+      )}
+    </div>
+  )
+}
+
+function NextConnection({ connections }: { connections: PeopleMatch[] | null }) {
+  return (
+    <div className="card flex h-full flex-col p-4">
+      <div className="mb-3 flex items-center gap-2">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-mason-green-50 text-mason-green-700">
+          <UserPlus size={16} />
         </div>
-        <ArrowRight size={15} className="ml-auto mt-0.5 shrink-0 text-gray-300" />
+        <div>
+          <h3 className="text-sm font-semibold text-gray-900">Your Next Connection</h3>
+          <p className="text-xs text-gray-500">People you may genuinely want to meet</p>
+        </div>
+      </div>
+
+      {!connections ? (
+        <LoadingState count={1} label="Loading suggested connections" />
+      ) : connections.length === 0 ? (
+        <p className="flex-1 rounded-xl border border-dashed border-gray-200 bg-white px-3 py-4 text-center text-xs text-gray-400">
+          Add more courses, interests, or skills in Settings to surface real matches.
+        </p>
+      ) : (
+        <div className="flex-1 space-y-2.5">
+          {connections.map((m) => (
+            <StudentCard key={m.student.id} student={m.student} reason={m.reasonText} />
+          ))}
+        </div>
+      )}
+      <Link
+        to="/discover/people"
+        className="focus-ring mt-3 flex items-center justify-center gap-1 rounded-lg border border-gray-200 py-2 text-xs font-medium text-gray-600 hover:border-mason-green-300 hover:text-mason-green-700"
+      >
+        See more people <ArrowRight size={12} />
       </Link>
     </div>
   )
