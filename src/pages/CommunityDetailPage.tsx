@@ -4,7 +4,7 @@ import { ArrowLeft, Plus, Users } from 'lucide-react'
 import { useApp } from '../context/AppContext'
 import { getCommunity } from '../services/communityService'
 import { listPostsForCommunity, toggleLike, toggleSave, addComment } from '../services/postService'
-import { getStudyGroupsByCourse } from '../data/studyGroups'
+import { getStudyGroupsByCourse } from '../services/dataStore'
 import { joinStudyGroup } from '../services/studyGroupService'
 import PostCard from '../components/cards/PostCard'
 import StudyGroupCard from '../components/cards/StudyGroupCard'
@@ -70,7 +70,13 @@ export default function CommunityDetailPage() {
             </h1>
           </div>
           <button
-            onClick={() => (joined ? leaveCommunity(community.id) : joinCommunity(community.id))}
+            onClick={() => {
+              const action = joined ? leaveCommunity(community.id) : joinCommunity(community.id)
+              action.then(
+                () => getCommunity(community.id).then((c) => setCommunity(c ?? null)),
+                () => getCommunity(community.id).then((c) => setCommunity(c ?? null)),
+              )
+            }}
             className={`focus-ring rounded-lg px-4 py-2 text-sm font-medium transition ${
               joined
                 ? 'bg-mason-green-50 text-mason-green-700 ring-1 ring-inset ring-mason-green-200 hover:bg-mason-green-100'
@@ -162,7 +168,12 @@ export default function CommunityDetailPage() {
                   key={g.id}
                   group={g}
                   joined={g.memberIds.includes(currentUser.id)}
-                  onJoin={(gid) => joinStudyGroup(gid, currentUser.id).then(() => setStudyGroups(getStudyGroupsByCourse(community.courseCode!)))}
+                  onJoin={(gid) =>
+                    joinStudyGroup(gid, currentUser.id).then(
+                      () => setStudyGroups(getStudyGroupsByCourse(community.courseCode!)),
+                      () => setStudyGroups(getStudyGroupsByCourse(community.courseCode!)),
+                    )
+                  }
                 />
               ))}
             </div>

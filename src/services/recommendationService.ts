@@ -1,8 +1,4 @@
-import { communities } from '../data/communities'
-import { posts } from '../data/posts'
-import { studyGroups, studyGroupSeekers } from '../data/studyGroups'
-import { opportunities } from '../data/opportunities'
-import { students, getStudentById } from '../data/students'
+import { getCommunities, getOpportunities, getPosts, getProfiles, getStudyGroupSeekers, getStudyGroups } from './dataStore'
 import type { Community, Intent, Recommendation, Student } from '../types'
 import { mockDelay } from './mockDelay'
 import { matchPeople } from './peopleService'
@@ -14,18 +10,15 @@ import { matchingSkills } from './opportunityService'
  * Every function here is deterministic, rule-based, and fully explainable —
  * there is no model in the loop. Each recommendation carries a `reason`
  * string surfaced directly in the UI so the "why am I seeing this" question
- * is always answerable. A production version would likely swap the scoring
- * logic for a real recommender while keeping this same "reason" contract.
- *
- * Recommendations are based only on profile and activity information the
- * student chose to share during onboarding — see OnboardingPage.
+ * is always answerable. Logic is unchanged from before Phase 13; only the
+ * data source (dataStore, backed by Supabase) changed.
  */
 
 export function getRecommendedCommunities(student: Student): { community: Community; reason: string }[] {
   const joined = new Set(student.communities)
   const results: { community: Community; reason: string }[] = []
 
-  for (const c of communities) {
+  for (const c of getCommunities()) {
     if (joined.has(c.id)) continue
     if (c.courseCode && student.courses.includes(c.courseCode)) {
       results.push({ community: c, reason: `Recommended because you're enrolled in ${c.courseCode}.` })
@@ -46,8 +39,11 @@ export function getRecommendedCommunities(student: Student): { community: Commun
 
 export function getForYouFeed(student: Student): Recommendation[] {
   const items: Recommendation[] = []
+  const communities = getCommunities()
+  const posts = getPosts()
+  const opportunities = getOpportunities()
+  const studyGroupSeekers = getStudyGroupSeekers()
 
-  // Study group seekers in the student's own courses
   for (const course of student.courses) {
     const seekers = studyGroupSeekers.filter((s) => s.courseCode === course && s.studentId !== student.id)
     if (seekers.length > 0) {
@@ -62,7 +58,6 @@ export function getForYouFeed(student: Student): Recommendation[] {
     }
   }
 
-  // Recommended communities (top 2)
   const recCommunities = getRecommendedCommunities(student).slice(0, 2)
   for (const { community, reason } of recCommunities) {
     items.push({
@@ -75,7 +70,6 @@ export function getForYouFeed(student: Student): Recommendation[] {
     })
   }
 
-  // Relevant discussion in one of their classes
   const classPost = posts.find((p) => {
     const community = communities.find((c) => c.id === p.communityId)
     return community?.courseCode && student.courses.includes(community.courseCode) && p.tags.includes('Question')
@@ -91,7 +85,6 @@ export function getForYouFeed(student: Student): Recommendation[] {
     })
   }
 
-  // Opportunity matching a skill
   const matchedOpportunity = opportunities.find((o) => matchingSkills(student, o).length > 0)
   if (matchedOpportunity) {
     const skills = matchingSkills(student, matchedOpportunity)
@@ -104,7 +97,6 @@ export function getForYouFeed(student: Student): Recommendation[] {
     })
   }
 
-  // Club/interest event for a shared interest, from a community not yet joined
   const eventCommunity = communities.find(
     (c) => !student.communities.includes(c.id) && c.tags.some((t) => student.interests.includes(t)) && c.recentActivitySummary.toLowerCase().includes('event'),
   )
@@ -118,8 +110,7 @@ export function getForYouFeed(student: Student): Recommendation[] {
     })
   }
 
-  // A person recommendation
-  const topMatch = matchPeople(student, students).find((m) => m.score > 0)
+  const topMatch = matchPeople(student, getProfiles()).find((m) => m.score > 0)
   if (topMatch) {
     items.push({
       id: `rec-person-${topMatch.student.id}`,
@@ -137,22 +128,27 @@ export interface IntentResults {
   studyGroups?: ReturnType<typeof studyGroupsForStudent>
   classmates?: { student: Student; reason: string }[]
   communities?: { community: Community; reason: string }[]
-  discussions?: typeof posts
+  discussions?: ReturnType<typeof getPosts>
   people?: ReturnType<typeof matchPeople>
   events?: { community: Community; reason: string }[]
-  opportunities?: (typeof opportunities[number] & { matchedSkills: string[] })[]
+  opportunities?: (ReturnType<typeof getOpportunities>[number] & { matchedSkills: string[] })[]
   requesters?: { student: Student; reason: string }[]
 }
 
 function studyGroupsForStudent(student: Student) {
-  return studyGroups.filter((g) => student.courses.includes(g.courseCode))
+  return getStudyGroups().filter((g) => student.courses.includes(g.courseCode))
 }
 
 export function getIntentResults(student: Student, intent: Intent): IntentResults {
+  const communities = getCommunities()
+  const posts = getPosts()
+  const opportunities = getOpportunities()
+  const profiles = getProfiles()
+
   switch (intent) {
     case 'study': {
-      const groups = studyGroups.filter((g) => student.courses.includes(g.courseCode))
-      const classmates = students
+      const groups = getStudyGroups().filter((g) => student.courses.includes(g.courseCode))
+      const classmates = profiles
         .filter((s) => s.id !== student.id && s.discoverable !== false && s.courses.some((c) => student.courses.includes(c)))
         .map((s) => {
           const shared = s.courses.filter((c) => student.courses.includes(c))
@@ -171,7 +167,7 @@ export function getIntentResults(student: Student, intent: Intent): IntentResult
       }
     }
     case 'meet': {
-      const people = matchPeople(student, students).filter((m) => m.sharedInterests.length > 0 || m.sharedCommunities.length > 0)
+      const people = matchPeople(student, profiles).filter((m) => m.sharedInterests.length > 0 || m.sharedCommunities.length > 0)
       const interestCommunities = getRecommendedCommunities(student).filter(({ community }) => community.category !== 'class')
       return { people, communities: interestCommunities }
     }
@@ -186,7 +182,7 @@ export function getIntentResults(student: Student, intent: Intent): IntentResult
       }
     }
     case 'collaborate': {
-      const people = matchPeople(student, students).filter((m) => m.sharedSkills.length > 0 || m.sharedInterests.length > 0)
+      const people = matchPeople(student, profiles).filter((m) => m.sharedSkills.length > 0 || m.sharedInterests.length > 0)
       const collabPosts = posts.filter((p) => p.tags.includes('Collaboration') || p.tags.includes('Project'))
       const matchedOpportunities = opportunities
         .map((o) => ({ ...o, matchedSkills: matchingSkills(student, o) }))
@@ -203,7 +199,7 @@ export function getIntentResults(student: Student, intent: Intent): IntentResult
         .filter((o) => o.matchedSkills.length > 0)
         .sort((a, b) => b.matchedSkills.length - a.matchedSkills.length)
       const requesters = matchedOpportunities
-        .map((o) => ({ student: getStudentById(o.postedBy)!, reason: `Posted "${o.title}"` }))
+        .map((o) => ({ student: profiles.find((p) => p.id === o.postedBy)!, reason: `Posted "${o.title}"` }))
         .filter((r) => r.student)
       return { opportunities: matchedOpportunities, requesters }
     }

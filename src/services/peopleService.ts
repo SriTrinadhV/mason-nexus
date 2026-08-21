@@ -1,5 +1,4 @@
-import { students } from '../data/students'
-import { getCommunityById } from '../data/communities'
+import { getCommunityById, getProfiles } from './dataStore'
 import type { Student } from '../types'
 import { mockDelay } from './mockDelay'
 
@@ -69,17 +68,14 @@ function buildReasonText(
 }
 
 /**
- * SIMULATED AI FEATURE — people matching.
- * Score is a simple weighted overlap of classes, interests, skills, and
- * communities. Production would likely use embeddings + activity signals,
- * but this keeps the "why" fully explainable, which matters more for a
- * prototype than sophistication.
- *
- * Candidates who have turned off "discoverable in People discovery" (Settings)
- * are excluded from the pool — this only affects whether *they* can be found
- * by others, never whether `student` (the person searching) can see results.
+ * SIMULATED AI FEATURE — people matching. Unchanged scoring logic; `pool`
+ * now defaults to the live, RLS-filtered profile cache instead of a static
+ * mock array — a non-discoverable student was never fetched into that cache
+ * in the first place (see profiles_select policy in schema.sql), so this
+ * filter is defense-in-depth, not the only thing standing between a hidden
+ * profile and this function.
  */
-export function matchPeople(student: Student, pool: Student[] = students): PeopleMatch[] {
+export function matchPeople(student: Student, pool: Student[] = getProfiles()): PeopleMatch[] {
   return pool
     .filter((s) => s.id !== student.id && s.discoverable !== false)
     .map((s) => {

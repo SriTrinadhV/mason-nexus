@@ -22,12 +22,13 @@ export default function CommunitiesPage() {
   const [results, setResults] = useState<Community[] | null>(null)
   const [createOpen, setCreateOpen] = useState(false)
 
+  const refresh = () => listCommunities({ category: category === 'all' ? undefined : category, query: query || undefined }).then(setResults)
+
   useEffect(() => {
     setResults(null)
-    const t = setTimeout(() => {
-      listCommunities({ category: category === 'all' ? undefined : category, query: query || undefined }).then(setResults)
-    }, 150)
+    const t = setTimeout(refresh, 150)
     return () => clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category, query])
 
   return (
@@ -94,7 +95,7 @@ export default function CommunitiesPage() {
               key={c.id}
               community={c}
               joined={currentUser.communities.includes(c.id)}
-              onJoinToggle={(id) => (currentUser.communities.includes(id) ? leaveCommunity(id) : joinCommunity(id))}
+              onJoinToggle={(id) => (currentUser.communities.includes(id) ? leaveCommunity(id) : joinCommunity(id)).then(refresh, refresh)}
             />
           ))}
         </div>

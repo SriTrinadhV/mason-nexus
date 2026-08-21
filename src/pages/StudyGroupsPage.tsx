@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Plus, Users } from 'lucide-react'
 import { useApp } from '../context/AppContext'
 import { listStudyGroups, joinStudyGroup, getSeekersForCourse } from '../services/studyGroupService'
-import { getStudentById } from '../data/students'
+import { getStudentById } from '../services/dataStore'
 import { courseOptions } from '../data/options'
 import StudyGroupCard from '../components/cards/StudyGroupCard'
 import CreateStudyGroupModal from '../components/CreateStudyGroupModal'
@@ -93,7 +93,7 @@ export default function StudyGroupsPage() {
               key={g.id}
               group={g}
               joined={g.memberIds.includes(currentUser.id)}
-              onJoin={(id) => joinStudyGroup(id, currentUser.id).then(load)}
+              onJoin={(id) => joinStudyGroup(id, currentUser.id).then(load, load)}
             />
           ))}
         </div>

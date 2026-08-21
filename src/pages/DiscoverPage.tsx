@@ -5,9 +5,7 @@ import { useApp } from '../context/AppContext'
 import { matchPeople, type PeopleMatch } from '../services/peopleService'
 import { getRecommendedCommunities } from '../services/recommendationService'
 import { getOpportunitiesMatchingStudent } from '../services/opportunityService'
-import { studyGroups } from '../data/studyGroups'
-import { communities } from '../data/communities'
-import { opportunities } from '../data/opportunities'
+import { getCommunities, getOpportunities, getStudyGroups } from '../services/dataStore'
 import StudentCard from '../components/cards/StudentCard'
 import CommunityCard from '../components/cards/CommunityCard'
 import StudyGroupCard from '../components/cards/StudyGroupCard'
@@ -40,18 +38,18 @@ export default function DiscoverPage() {
 
   const recommendedCommunities = getRecommendedCommunities(currentUser)
   const recommendedCommunityIds = new Set(recommendedCommunities.map((r) => r.community.id))
-  const otherCommunities: { community: Community; reason?: string }[] = communities
+  const otherCommunities: { community: Community; reason?: string }[] = getCommunities()
     .filter((c) => !currentUser.communities.includes(c.id) && !recommendedCommunityIds.has(c.id))
     .map((community) => ({ community }))
   const browseCommunities = [...recommendedCommunities, ...otherCommunities].slice(0, 6)
 
-  const myCourseGroups = studyGroups.filter((g) => currentUser.courses.includes(g.courseCode))
-  const otherGroups = studyGroups.filter((g) => !currentUser.courses.includes(g.courseCode))
+  const myCourseGroups = getStudyGroups().filter((g) => currentUser.courses.includes(g.courseCode))
+  const otherGroups = getStudyGroups().filter((g) => !currentUser.courses.includes(g.courseCode))
   const browseGroups = [...myCourseGroups, ...otherGroups].slice(0, 4)
 
   const matchedOpportunities = getOpportunitiesMatchingStudent(currentUser)
   const matchedOpportunityIds = new Set(matchedOpportunities.map((o) => o.id))
-  const otherOpportunities = opportunities
+  const otherOpportunities = getOpportunities()
     .filter((o) => !matchedOpportunityIds.has(o.id))
     .map((o) => ({ ...o, matchedSkills: [] as string[] }))
   const browseOpportunities = [...matchedOpportunities, ...otherOpportunities].slice(0, 5)
@@ -89,7 +87,7 @@ export default function DiscoverPage() {
                 key={g.id}
                 group={g}
                 joined={g.memberIds.includes(currentUser.id)}
-                onJoin={(id) => joinStudyGroup(id, currentUser.id).then(refresh)}
+                onJoin={(id) => joinStudyGroup(id, currentUser.id).then(refresh, refresh)}
               />
             ))}
           </CardGrid>

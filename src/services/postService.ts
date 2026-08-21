@@ -1,70 +1,64 @@
-import { posts, getPostsByCommunity } from '../data/posts'
+import { supabase } from './supabaseClient'
+import { getPosts, getPostsByCommunity, refreshPosts } from './dataStore'
 import type { Post, PostTag } from '../types'
 import { mockDelay } from './mockDelay'
-import { generateId } from './id'
 
 export function listPostsForCommunity(communityId: string): Promise<Post[]> {
-  return mockDelay(
-    [...getPostsByCommunity(communityId)].sort((a, b) => posts.indexOf(a) - posts.indexOf(b)),
-  )
+  return mockDelay(getPostsByCommunity(communityId))
 }
 
-export function createPost(input: {
+export async function createPost(input: {
   communityId: string
   authorId: string
   title: string
   body: string
   tags: PostTag[]
 }): Promise<Post> {
-  const newPost: Post = {
-    id: generateId('post'),
-    communityId: input.communityId,
-    authorId: input.authorId,
-    title: input.title,
-    body: input.body,
-    tags: input.tags,
-    createdAt: 'Just now',
-    likes: 0,
-    comments: [],
-  }
-  posts.unshift(newPost)
-  return mockDelay(newPost, 500)
+  const { data, error } = await supabase
+    .from('posts')
+    .insert({ community_id: input.communityId, author_id: input.authorId, title: input.title, body: input.body, tags: input.tags })
+    .select('id')
+    .single()
+  if (error) throw error
+
+  await refreshPosts(input.authorId)
+  const created = getPosts().find((p) => p.id === data.id)
+  if (!created) throw new Error('Post created but could not be re-fetched')
+  return created
 }
 
-export function toggleLike(postId: string): Promise<Post | undefined> {
-  const post = posts.find((p) => p.id === postId)
-  if (post) {
-    post.likedByMe = !post.likedByMe
-    post.likes += post.likedByMe ? 1 : -1
-  }
-  return mockDelay(post, 150)
+export async function toggleLike(postId: string): Promise<Post | undefined> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+  const { error } = await supabase.rpc('toggle_post_like', { p_post_id: postId })
+  if (error) throw error
+  await refreshPosts(user.id)
+  return getPosts().find((p) => p.id === postId)
 }
 
-export function toggleSave(postId: string): Promise<Post | undefined> {
-  const post = posts.find((p) => p.id === postId)
-  if (post) post.savedByMe = !post.savedByMe
-  return mockDelay(post, 150)
+export async function toggleSave(postId: string): Promise<Post | undefined> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+  const { error } = await supabase.rpc('toggle_post_save', { p_post_id: postId })
+  if (error) throw error
+  await refreshPosts(user.id)
+  return getPosts().find((p) => p.id === postId)
 }
 
-export function addComment(postId: string, authorId: string, body: string): Promise<Post | undefined> {
-  const post = posts.find((p) => p.id === postId)
-  if (post) {
-    post.comments.push({
-      id: generateId('c'),
-      authorId,
-      body,
-      createdAt: 'Just now',
-      likes: 0,
-    })
-  }
-  return mockDelay(post, 300)
+export async function addComment(postId: string, authorId: string, body: string): Promise<Post | undefined> {
+  const { error } = await supabase.from('comments').insert({ post_id: postId, author_id: authorId, body })
+  if (error) throw error
+  await refreshPosts(authorId)
+  return getPosts().find((p) => p.id === postId)
 }
 
 /**
- * SIMULATED AI FEATURE — duplicate question detection.
- * Real implementation would use semantic embeddings; this prototype does
- * simple keyword overlap against existing "Question"-tagged posts in the
- * same community, which is enough to demonstrate the interaction pattern.
+ * SIMULATED AI FEATURE — duplicate question detection (unchanged logic, now
+ * reading from the live post cache instead of the old mock array).
  */
 export function findPossibleDuplicates(communityId: string, title: string): Promise<Post[]> {
   const stopwords = new Set(['the', 'a', 'an', 'does', 'anyone', 'is', 'to', 'of', 'and', 'for', 'in', 'on', 'i', 'my', 'about'])

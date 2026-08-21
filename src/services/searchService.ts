@@ -1,8 +1,4 @@
-import { communities } from '../data/communities'
-import { posts } from '../data/posts'
-import { students } from '../data/students'
-import { studyGroups } from '../data/studyGroups'
-import { opportunities } from '../data/opportunities'
+import { getCommunities, getOpportunities, getPosts, getProfiles, getStudyGroups } from './dataStore'
 import type { Community, Opportunity, Post, Student, StudyGroup } from '../types'
 import { mockDelay } from './mockDelay'
 
@@ -160,6 +156,12 @@ export function search(query: string, currentUserId?: string): Promise<SearchRes
   // the whole normalized query so the search still does *something* useful.
   const effectiveTokens = tokens.length > 0 ? tokens : [normalizedQuery]
   const coursePairs = extractCourseCodePairs(normalizedQuery)
+
+  const communities = getCommunities()
+  const posts = getPosts()
+  const students = getProfiles()
+  const studyGroups = getStudyGroups()
+  const opportunities = getOpportunities()
 
   const matchedCommunities = rankAndTake(
     communities,

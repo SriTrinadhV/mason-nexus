@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import type { Opportunity } from '../../types'
 import Tag from '../common/Tag'
-import { getStudentById } from '../../data/students'
+import { getStudentById } from '../../services/dataStore'
 
 export default function OpportunityCard({
   opportunity,

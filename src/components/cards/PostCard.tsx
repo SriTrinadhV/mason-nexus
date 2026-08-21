@@ -3,7 +3,7 @@ import { Bookmark, Flag, MessageCircle, ThumbsUp } from 'lucide-react'
 import type { Post } from '../../types'
 import Avatar from '../common/Avatar'
 import Tag from '../common/Tag'
-import { getStudentById } from '../../data/students'
+import { getStudentById } from '../../services/dataStore'
 import ReportModal from '../ReportModal'
 
 export default function PostCard({

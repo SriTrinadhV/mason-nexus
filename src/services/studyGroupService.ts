@@ -1,26 +1,31 @@
-import { studyGroups, studyGroupSeekers } from '../data/studyGroups'
+import { supabase } from './supabaseClient'
+import { getStudyGroups, getStudyGroupSeekers, refreshStudyGroups } from './dataStore'
 import type { StudyGroup } from '../types'
 import { mockDelay } from './mockDelay'
-import { generateId } from './id'
 
 export function listStudyGroups(courseCode?: string): Promise<StudyGroup[]> {
-  const result = courseCode ? studyGroups.filter((g) => g.courseCode === courseCode) : studyGroups
+  const result = courseCode ? getStudyGroups().filter((g) => g.courseCode === courseCode) : getStudyGroups()
   return mockDelay([...result])
 }
 
 export function getSeekersForCourse(courseCode: string) {
-  return studyGroupSeekers.filter((s) => s.courseCode === courseCode)
+  return getStudyGroupSeekers().filter((s) => s.courseCode === courseCode)
 }
 
-export function joinStudyGroup(groupId: string, studentId: string): Promise<StudyGroup | undefined> {
-  const group = studyGroups.find((g) => g.id === groupId)
-  if (group && !group.memberIds.includes(studentId) && group.memberIds.length < group.capacity) {
-    group.memberIds.push(studentId)
-  }
-  return mockDelay(group, 400)
+/**
+ * Capacity is enforced atomically in the database (join_study_group() in
+ * schema.sql row-locks the group before checking capacity), not just here —
+ * this call can genuinely fail (e.g. the group filled up between page load
+ * and click), which callers surface via the rejected promise.
+ */
+export async function joinStudyGroup(groupId: string, _studentId: string): Promise<StudyGroup | undefined> {
+  const { error } = await supabase.rpc('join_study_group', { p_group_id: groupId })
+  if (error) throw error
+  await refreshStudyGroups()
+  return getStudyGroups().find((g) => g.id === groupId)
 }
 
-export function createStudyGroup(input: {
+export async function createStudyGroup(input: {
   courseCode: string
   title: string
   meetingTime: string
@@ -29,17 +34,25 @@ export function createStudyGroup(input: {
   capacity: number
   createdBy: string
 }): Promise<StudyGroup> {
-  const group: StudyGroup = {
-    id: generateId('sg'),
-    courseCode: input.courseCode,
-    title: input.title,
-    memberIds: [input.createdBy],
-    capacity: input.capacity,
-    meetingTime: input.meetingTime,
-    location: input.location,
-    description: input.description,
-    createdBy: input.createdBy,
-  }
-  studyGroups.unshift(group)
-  return mockDelay(group, 500)
+  const { data, error } = await supabase
+    .from('study_groups')
+    .insert({
+      course_code: input.courseCode,
+      title: input.title,
+      meeting_time: input.meetingTime,
+      location: input.location,
+      description: input.description,
+      capacity: input.capacity,
+      created_by: input.createdBy,
+    })
+    .select('id')
+    .single()
+  if (error) throw error
+
+  // The creator is auto-added as a member by a database trigger
+  // (add_creator_as_member in schema.sql), matching the old mock behavior.
+  await refreshStudyGroups()
+  const created = getStudyGroups().find((g) => g.id === data.id)
+  if (!created) throw new Error('Study group created but could not be re-fetched')
+  return created
 }
