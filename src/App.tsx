@@ -18,17 +18,41 @@ import ProfilePage from './pages/ProfilePage'
 import SettingsPage from './pages/SettingsPage'
 import NotificationsPage from './pages/NotificationsPage'
 
+// While the initial session check is in flight (e.g. right after a hard
+// refresh, before we know if a persisted Supabase session exists), the
+// guards below must not redirect yet — authStatus still reads its default
+// 'signed_out' at that point, and redirecting on it would bounce a genuinely
+// signed-in user to /login for a flash before snapping back.
+function SessionGate({ children }: { children: React.ReactNode }) {
+  const { sessionLoading } = useApp()
+  if (sessionLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-canvas">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-mason-green-600 border-t-transparent" />
+      </div>
+    )
+  }
+  return <>{children}</>
+}
+
 function RequireOnboardedUser({ children }: { children: React.ReactNode }) {
   const { authStatus, onboarded } = useApp()
-  if (authStatus !== 'signed_in') return <Navigate to="/login" replace />
-  if (!onboarded) return <Navigate to="/onboarding" replace />
-  return <>{children}</>
+  return (
+    <SessionGate>
+      {authStatus !== 'signed_in' ? (
+        <Navigate to="/login" replace />
+      ) : !onboarded ? (
+        <Navigate to="/onboarding" replace />
+      ) : (
+        <>{children}</>
+      )}
+    </SessionGate>
+  )
 }
 
 function RequireSignedIn({ children }: { children: React.ReactNode }) {
   const { authStatus } = useApp()
-  if (authStatus !== 'signed_in') return <Navigate to="/login" replace />
-  return <>{children}</>
+  return <SessionGate>{authStatus !== 'signed_in' ? <Navigate to="/login" replace /> : <>{children}</>}</SessionGate>
 }
 
 export default function App() {

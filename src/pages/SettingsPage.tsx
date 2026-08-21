@@ -21,8 +21,8 @@ export default function SettingsPage() {
     setLookingFor((prev) => (prev.includes(value) ? prev.filter((x) => x !== value) : [...prev, value]))
   }
 
-  const handleSave = () => {
-    updateProfile({ lookingFor })
+  const handleSave = async () => {
+    await updateProfile({ lookingFor })
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }

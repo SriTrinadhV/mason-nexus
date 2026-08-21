@@ -1,15 +1,14 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ShieldCheck } from 'lucide-react'
-import { login } from '../services/authService'
 import { useApp } from '../context/AppContext'
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('alex.johnson@masonlive.gmu.edu')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const { signIn } = useApp()
+  const { login } = useApp()
   const navigate = useNavigate()
 
   const handleSubmit = async (e: FormEvent) => {
@@ -19,7 +18,6 @@ export default function LoginPage() {
     const result = await login(email, password)
     setLoading(false)
     if (result.success) {
-      signIn()
       navigate('/home')
     } else {
       setError(result.message)
@@ -70,7 +68,6 @@ export default function LoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Any value works in this prototype"
                 className="focus-ring w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
               />
             </div>
@@ -80,13 +77,13 @@ export default function LoginPage() {
               disabled={loading}
               className="focus-ring w-full rounded-lg bg-mason-green-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-mason-green-700 disabled:opacity-60"
             >
-              {loading ? 'Verifying…' : 'Log in'}
+              {loading ? 'Signing in…' : 'Log in'}
             </button>
           </form>
 
           <div className="mt-4 flex items-start gap-2 rounded-lg bg-gray-50 p-3 text-xs text-gray-500">
             <ShieldCheck size={15} className="mt-0.5 shrink-0 text-gray-400" />
-            <span>Authentication is simulated for this prototype — no real accounts are created or verified.</span>
+            <span>Real accounts, restricted to @gmu.edu / @masonlive.gmu.edu emails. This checks the email domain only — it isn't official GMU SSO verification.</span>
           </div>
         </div>
         <p className="mt-4 text-center text-sm text-gray-500">

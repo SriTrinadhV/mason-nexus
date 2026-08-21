@@ -44,8 +44,11 @@ export default function OnboardingPage() {
     }
   })()
 
-  const handleFinish = () => {
-    completeOnboarding(data)
+  const [finishing, setFinishing] = useState(false)
+
+  const handleFinish = async () => {
+    setFinishing(true)
+    await completeOnboarding(data)
     navigate('/home')
   }
 
@@ -158,10 +161,10 @@ export default function OnboardingPage() {
             ) : (
               <button
                 onClick={handleFinish}
-                disabled={!canAdvance}
+                disabled={!canAdvance || finishing}
                 className="focus-ring flex items-center gap-1.5 rounded-lg bg-mason-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-mason-green-700 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400"
               >
-                Finish <Check size={16} />
+                {finishing ? 'Saving…' : 'Finish'} <Check size={16} />
               </button>
             )}
           </div>

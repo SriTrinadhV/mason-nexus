@@ -2,8 +2,7 @@ import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Briefcase, ExternalLink, Pencil, Settings, ShieldCheck, X } from 'lucide-react'
 import { useApp } from '../context/AppContext'
-import { getStudentById } from '../data/students'
-import { getCommunityById } from '../data/communities'
+import { getCommunityById, getStudentById } from '../services/dataStore'
 import Avatar from '../components/common/Avatar'
 import Tag from '../components/common/Tag'
 import ChipSelect from '../components/common/ChipSelect'
@@ -36,8 +35,8 @@ export default function ProfilePage() {
     setEditing(true)
   }
 
-  const saveEdit = () => {
-    updateProfile({
+  const saveEdit = async () => {
+    await updateProfile({
       bio: bioDraft,
       interests: interestsDraft,
       skills: skillsDraft,
