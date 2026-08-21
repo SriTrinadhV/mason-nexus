@@ -164,3 +164,14 @@ export interface OnboardingData {
   skills: string[]
   lookingFor: LookingForOption[]
 }
+
+export interface PollOption {
+  id: string
+  label: string
+}
+
+export interface Poll {
+  id: string
+  question: string
+  options: PollOption[]
+}

@@ -3,6 +3,7 @@ import { getCurrentUser, students } from '../data/students'
 import { communities } from '../data/communities'
 import { opportunities } from '../data/opportunities'
 import { initialNotifications } from '../data/notifications'
+import { initialPollVotes } from '../data/polls'
 import { expressInterest } from '../services/opportunityService'
 import { generateId } from '../services/id'
 import type { AppNotification, OnboardingData, Opportunity, Student } from '../types'
@@ -23,6 +24,9 @@ interface AppContextValue {
   addNotification: (input: Omit<AppNotification, 'id' | 'createdAt' | 'read'>) => void
   markNotificationRead: (id: string) => void
   markAllNotificationsRead: () => void
+  pollVoteCounts: Record<string, number>
+  myPollVote: string | null
+  voteInPoll: (optionId: string) => void
 }
 
 const AppContext = createContext<AppContextValue | undefined>(undefined)
@@ -145,6 +149,28 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
   }, [])
 
+  // Nexus Now's campus poll. Same idempotency pattern as joinCommunity: a
+  // ref tracks the user's current vote synchronously so a rapid double-click
+  // (or a StrictMode double-invocation) can't double-decrement/increment the
+  // tallies — the guard and the "what changed" logic live in the plain
+  // callback body, and the state updater stays a pure function of prev.
+  const [pollVoteCounts, setPollVoteCounts] = useState<Record<string, number>>(() => ({ ...initialPollVotes }))
+  const [myPollVote, setMyPollVote] = useState<string | null>(null)
+  const myPollVoteRef = useRef<string | null>(null)
+
+  const voteInPoll = useCallback((optionId: string) => {
+    const previous = myPollVoteRef.current
+    if (previous === optionId) return
+    myPollVoteRef.current = optionId
+    setPollVoteCounts((prev) => {
+      const next = { ...prev }
+      if (previous) next[previous] = Math.max(0, (next[previous] ?? 0) - 1)
+      next[optionId] = (next[optionId] ?? 0) + 1
+      return next
+    })
+    setMyPollVote(optionId)
+  }, [])
+
   // Keep the shared mock students array in sync with edits made to "me" so
   // other prototype screens (people discovery, community member lists) stay consistent.
   useMemo(() => {
@@ -170,6 +196,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     addNotification,
     markNotificationRead,
     markAllNotificationsRead,
+    pollVoteCounts,
+    myPollVote,
+    voteInPoll,
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
