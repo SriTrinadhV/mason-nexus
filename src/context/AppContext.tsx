@@ -11,6 +11,17 @@ import {
 } from '../services/notificationService'
 import type { AppNotification, OnboardingData, Opportunity, Student } from '../types'
 
+export type Theme = 'light' | 'dark'
+const THEME_STORAGE_KEY = 'mason-nexus-theme'
+
+function getStoredTheme(): Theme {
+  try {
+    return localStorage.getItem(THEME_STORAGE_KEY) === 'dark' ? 'dark' : 'light'
+  } catch {
+    return 'light'
+  }
+}
+
 const BLANK_STUDENT: Student = {
   id: '',
   name: '',
@@ -53,6 +64,8 @@ interface AppContextValue {
   myPollVote: string | null
   voteInPoll: (optionId: string) => Promise<void>
   refreshData: () => Promise<void>
+  theme: Theme
+  setTheme: (theme: Theme) => void
 }
 
 const AppContext = createContext<AppContextValue | undefined>(undefined)
@@ -65,6 +78,31 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<AppNotification[]>([])
   const [pollVoteCounts, setPollVoteCounts] = useState<Record<string, number>>({})
   const [myPollVote, setMyPollVote] = useState<string | null>(null)
+  const [theme, setThemeState] = useState<Theme>(getStoredTheme)
+
+  // Applies to <html> so every existing bg-white/text-gray-*/bg-mason-* class
+  // resolves through the dark-mode token overrides in index.css — no
+  // per-component dark: classes needed. Works on public and protected pages
+  // alike since this runs regardless of auth state, and persists via
+  // localStorage rather than Supabase (no server round trip, no schema
+  // change, survives sign-out).
+  const setTheme = useCallback((next: Theme) => {
+    setThemeState(next)
+    document.documentElement.setAttribute('data-theme', next)
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, next)
+    } catch {
+      // Storage unavailable (private browsing, quota) — theme still applies
+      // for this session, just won't persist across a reload.
+    }
+  }, [])
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    // Only runs once on mount to sync with the inline anti-flash script in
+    // index.html; setTheme() handles every subsequent change itself.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Loads every table the current session is allowed to see (Row Level
   // Security decides that, not this function) into dataStore's in-memory
@@ -300,6 +338,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     myPollVote,
     voteInPoll,
     refreshData,
+    theme,
+    setTheme,
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>

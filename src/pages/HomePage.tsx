@@ -162,6 +162,7 @@ function NexusNowSection({ pulse, connections }: { pulse: NexusNowPulse | null; 
             Nexus Now
           </h2>
           <p className="text-xs text-gray-500">What's happening around Mason right now</p>
+          <p className="mt-0.5 text-[11px] italic text-gray-400">Trending and activity below reflect prototype campus data.</p>
         </div>
       </div>
 
@@ -232,6 +233,7 @@ function NextConnection({ connections }: { connections: PeopleMatch[] | null }) 
           <p className="text-xs text-gray-500">People you may genuinely want to meet</p>
         </div>
       </div>
+      <p className="mb-3 text-[11px] italic text-gray-400">Every recommendation comes with a reason — never a black box.</p>
 
       {!connections ? (
         <LoadingState count={1} label="Loading suggested connections" />

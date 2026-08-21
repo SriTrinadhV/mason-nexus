@@ -27,7 +27,7 @@ export default function Modal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-gray-900/45 p-0 backdrop-blur-[2px] sm:items-center sm:p-4"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/45 p-0 backdrop-blur-[2px] sm:items-center sm:p-4"
       style={{ animation: 'modal-backdrop-in 150ms ease-out' }}
       onClick={onClose}
       role="presentation"

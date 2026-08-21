@@ -35,8 +35,83 @@
      several pages. */
   --color-canvas: #f6f8f6;
 
+  /* Body's own base text color — kept as its own token (not reused from the
+     gray-900 utility scale below) so it can preserve the exact original
+     #1a1f1c rather than drifting to Tailwind's stock gray-900. */
+  --color-ink: #1a1f1c;
+
+  /* Explicitly declared (matching Tailwind's own default values exactly, so
+     light mode is pixel-identical to before) so these become real theme
+     variables that every existing bg-white/text-gray-500/border-gray-200/
+     etc. utility class resolves through — that's what lets the dark-mode
+     override block below retheme the entire app without touching a single
+     component file. */
+  --color-white: #ffffff;
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  --color-red-50: #fef2f2;
+  --color-red-100: #fee2e2;
+  --color-red-600: #dc2626;
+  --color-red-700: #b91c1c;
+  --color-red-800: #991b1b;
+
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-display: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Dark mode — a restrained dark charcoal-green, not a generic black theme.
+   Only redeclares the same token names already used everywhere via Tailwind
+   utility classes (bg-white, text-gray-500, bg-mason-green-50, ...), so the
+   entire app reflows into dark mode without any component changes. Applied
+   via a `data-theme` attribute on <html> (see AppContext.tsx), not a media
+   query — this project intentionally ships explicit Light/Dark only. */
+:root[data-theme='dark'] {
+  --color-canvas: #0c130f;
+  --color-ink: #f5faf6;
+  --color-white: #141d18;
+  --color-gray-50: #1a251f;
+  --color-gray-100: #22302a;
+  --color-gray-200: #2c3b34;
+  --color-gray-300: #44574d;
+  --color-gray-400: #66796f;
+  --color-gray-500: #93a69a;
+  --color-gray-600: #b6c4bb;
+  --color-gray-700: #d4ddd7;
+  --color-gray-800: #e8efe9;
+  --color-gray-900: #f5faf6;
+  --color-red-50: #2a1416;
+  --color-red-100: #3d2024;
+  --color-red-600: #e2645d;
+  --color-red-700: #c8534c;
+  --color-red-800: #f5b8b3;
+
+  --color-mason-green-50: #12241c;
+  --color-mason-green-100: #1a3327;
+  --color-mason-green-200: #2d5943;
+  --color-mason-green-300: #3f7a5c;
+  --color-mason-green-400: #54936f;
+  --color-mason-green-500: #3ea173;
+  --color-mason-green-600: #349566;
+  --color-mason-green-700: #4fb686;
+  --color-mason-green-800: #2a7350;
+  --color-mason-green-900: #163f2c;
+
+  --color-mason-gold-50: #241c0c;
+  --color-mason-gold-100: #3a2c12;
+  --color-mason-gold-200: #5c481d;
+  --color-mason-gold-300: #7a5f25;
+  --color-mason-gold-400: #a67f2f;
+  --color-mason-gold-500: #d9a53a;
+  --color-mason-gold-600: #e6bb5c;
+  --color-mason-gold-700: #f0cc7e;
 }
 
 html {
@@ -46,7 +121,7 @@ html {
 body {
   font-family: var(--font-sans);
   background-color: var(--color-canvas);
-  color: #1a1f1c;
+  color: var(--color-ink);
 }
 
 * {

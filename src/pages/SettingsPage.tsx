@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { LogOut, Shield } from 'lucide-react'
+import { LogOut, Moon, Shield, Sun } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import ChipSelect from '../components/common/ChipSelect'
@@ -7,7 +7,7 @@ import { lookingForOptions } from '../data/options'
 import type { LookingForOption } from '../types'
 
 export default function SettingsPage() {
-  const { currentUser, updateProfile, signOut } = useApp()
+  const { currentUser, updateProfile, signOut, theme, setTheme } = useApp()
   const navigate = useNavigate()
 
   const [lookingFor, setLookingFor] = useState<LookingForOption[]>(currentUser.lookingFor)
@@ -48,6 +48,13 @@ export default function SettingsPage() {
         </h1>
         <p className="mt-1 text-sm text-gray-500">Manage your profile preferences, notifications, and privacy.</p>
       </div>
+
+      <SettingsSection title="Appearance" description="Choose how Mason Nexus looks on this device.">
+        <div className="inline-flex rounded-lg border border-gray-200 p-1">
+          <ThemeOption icon={Sun} label="Light" active={theme === 'light'} onClick={() => setTheme('light')} />
+          <ThemeOption icon={Moon} label="Dark" active={theme === 'dark'} onClick={() => setTheme('dark')} />
+        </div>
+      </SettingsSection>
 
       <SettingsSection title="What are you looking for?" description="This drives your recommendations across the platform.">
         <ChipSelect options={[...lookingForOptions]} selected={lookingFor} onToggle={toggleLookingFor} />
@@ -101,6 +108,32 @@ function SettingsSection({ title, description, children }: { title: string; desc
       {!description && <div className="mb-3" />}
       {children}
     </div>
+  )
+}
+
+function ThemeOption({
+  icon: Icon,
+  label,
+  active,
+  onClick,
+}: {
+  icon: React.ElementType
+  label: string
+  active: boolean
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={active}
+      onClick={onClick}
+      className={`focus-ring flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition ${
+        active ? 'bg-mason-green-600 text-white' : 'text-gray-600 hover:bg-gray-50'
+      }`}
+    >
+      <Icon size={14} />
+      {label}
+    </button>
   )
 }
 

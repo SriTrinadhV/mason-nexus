@@ -34,12 +34,12 @@ export default function LandingPage() {
           className="mb-5 text-4xl font-bold leading-[1.1] tracking-tight text-gray-900 sm:text-6xl"
           style={{ fontFamily: 'var(--font-display)' }}
         >
-          Find your people.
-          <br className="hidden sm:block" /> Learn together. <span className="text-mason-green-600">Build what comes next.</span>
+          Your campus is scattered.
+          <br className="hidden sm:block" /> <span className="text-mason-green-600">Your people shouldn't be.</span>
         </h1>
         <p className="mx-auto mb-9 max-w-2xl text-lg leading-relaxed text-gray-600">
-          Discover communities, classmates, collaborators, and opportunities across GMU —
-          matched to your classes, interests, and skills.
+          Classes, Discords, GroupMes, clubs, word of mouth — GMU life happens everywhere but
+          nowhere at once. Mason Nexus brings it into one place, matched to what you actually study and care about.
         </p>
         <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link to="/signup" className="btn-primary w-full px-6 py-3 text-[15px] sm:w-auto">

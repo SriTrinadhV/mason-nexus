@@ -6,6 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="GMU Student Community Platform — a rough working prototype for discovering communities, classmates, study groups, and collaboration opportunities at George Mason University." />
     <title>Mason Nexus — GMU Student Community Platform (Prototype)</title>
+    <script>
+      // Applied before React mounts so a saved dark-mode preference doesn't
+      // flash light on load. Kept in sync with AppContext.tsx's theme logic.
+      (function () {
+        try {
+          var t = localStorage.getItem('mason-nexus-theme')
+          if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark')
+        } catch (e) {}
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>
